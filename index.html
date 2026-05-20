@@ -803,6 +803,48 @@ async function init(){
   // restaurar sesión admin si estaba activa
   if(adminLogueado) renderGrid();
 }
+
+// ========== CÓDIGO DE DIAGNÓSTICO - AGREGAR AQUÍ ==========
+console.log('=== DIAGNÓSTICO ===');
+console.log('canales cargados:', canales.length);
+console.log('adminLogueado:', adminLogueado);
+
+// Forzar una prueba manual
+window.testAbrirCanal = function(id) {
+    console.log('Test manual - abriendo canal:', id);
+    const c = canales.find(x => x.id === id);
+    console.log('Canal encontrado:', c);
+    if(c) {
+        abrirCanal(id);
+    } else {
+        console.error('Canal no encontrado:', id);
+    }
+};
+
+// Modificar handleCardClick para diagnóstico
+const originalHandleClick = handleCardClick;
+window.handleCardClick = function(id) {
+    console.log('handleCardClick llamado con id:', id, 'adminLogueado:', adminLogueado);
+    if(adminLogueado){ 
+        console.log('Modo admin, editando canal');
+        editarCanal(id); 
+        return; 
+    }
+    console.log('Abriendo canal normal:', id);
+    abrirCanal(id);
+};
+
+// Verificar que el evento click funciona
+document.addEventListener('click', function(e) {
+    const card = e.target.closest('.canal-card');
+    if(card && !adminLogueado) {
+        console.log('Click detectado en card:', card.id);
+        const id = card.id.replace('card-', '');
+        console.log('ID extraído:', id);
+    }
+});
+// ========== FIN DIAGNÓSTICO ==========
+
 init();
 </script>
 </body>
