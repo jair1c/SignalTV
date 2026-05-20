@@ -249,7 +249,43 @@ let filtroActivo = 'todo';
 let cardActiva = null;
 
 function renderGrid(filter){
-  const grid = document.getElementById('grid');
+  
+// ===== NUEVOS CANALES DINÁMICOS =====
+
+// Deportes: streams 1 al 49
+for(let i = 1; i <= 49; i++){
+  canales.push({
+    nombre: `Deportes Stream ${i}`,
+    cat: "deportes",
+    icon: `DEP
+${i}`,
+    servidores: [
+      `https://deportes.ksdjugfsddeports.com/tvporinternet.php?stream=${i}_`,
+      `https://deportes.ksdjugfsddeports.com/tvporinternet2.php?stream=${i}_`,
+      `https://deportes.ksdjugfsddeports.com/tvporinternet3.php?stream=${i}_`
+    ],
+    url: `https://deportes.ksdjugfsddeports.com/tvporinternet.php?stream=${i}_`
+  });
+}
+
+// Regionales: streams 1 al 75
+for(let i = 1; i <= 75; i++){
+  canales.push({
+    nombre: `Regional Stream ${i}`,
+    cat: "entretenimiento",
+    icon: `REG
+${i}`,
+    servidores: [
+      `https://regionales.saohgdasregions.fun/tvporinternet.php?stream=${i}_`,
+      `https://regionales.saohgdasregions.fun/tvporinternet2.php?stream=${i}_`,
+      `https://regionales.saohgdasregions.fun/tvporinternet3.php?stream=${i}_`
+    ],
+    url: `https://regionales.saohgdasregions.fun/tvporinternet.php?stream=${i}_`
+  });
+}
+
+
+const grid = document.getElementById('grid');
   const lista = filter === 'todo' ? canales : canales.filter(c => c.cat === filter);
   grid.innerHTML = lista.map((c,i) => {
     const col = catColors[c.cat];
