@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CanalesTV</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --bg:#0a0a0f;
+    --surface:#111118;
+    --surface2:#1a1a25;
+    --border:#ffffff12;
+    --border2:#ffffff22;
+    --accent:#e8302a;
+    --accent2:#ff6b35;
+    --text:#f0f0f0;
+    --muted:#888;
+    --card-h:148px;
+  }
+  body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden}
+
+  /* HEADER */
+  .header{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:18px 28px;
+    border-bottom:1px solid var(--border);
+    background:var(--surface);
+    position:sticky;top:0;z-index:100;
+  }
+  .logo{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;color:var(--text)}
+  .logo span{color:var(--accent)}
+  .live-badge{
+    display:flex;align-items:center;gap:6px;
+    background:#e8302a18;border:1px solid #e8302a55;
+    padding:5px 12px;border-radius:20px;
+    font-size:11px;font-weight:500;letter-spacing:1px;color:var(--accent);text-transform:uppercase
+  }
+  .live-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:pulse 1.4s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+  /* FILTER TABS */
+  .tabs{display:flex;gap:4px;padding:20px 28px 12px;overflow-x:auto;scrollbar-width:none}
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{
+    white-space:nowrap;padding:7px 18px;border-radius:20px;
+    border:1px solid var(--border2);background:transparent;
+    color:var(--muted);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;
+    transition:all .2s;
+  }
+  .tab:hover{border-color:#ffffff44;color:var(--text)}
+  .tab.active{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:500}
+
+  /* GRID */
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+    gap:12px;padding:12px 28px 28px;
+  }
+
+  /* CANAL CARD */
+  .canal-card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:12px;
+    overflow:hidden;
+    cursor:pointer;
+    transition:all .25s;
+    position:relative;
+  }
+  .canal-card:hover{
+    border-color:#ffffff33;
+    transform:translateY(-3px);
+    background:var(--surface2);
+  }
+  .canal-card.playing{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+
+  .card-thumb{
+    height:90px;display:flex;align-items:center;justify-content:center;
+    position:relative;overflow:hidden;
+  }
+  .card-thumb::before{
+    content:'';position:absolute;inset:0;
+    background:linear-gradient(135deg,var(--surface2) 0%,#0a0a1a 100%);
+  }
+  .canal-icon{
+    position:relative;z-index:1;
+    width:52px;height:52px;border-radius:10px;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:1px;
+    text-align:center;line-height:1.1;
+  }
+  .canal-icon.deportes{background:#e8302a22;border:1px solid #e8302a55;color:var(--accent)}
+  .canal-icon.entretenimiento{background:#7c3aed22;border:1px solid #7c3aed55;color:#a78bfa}
+  .canal-icon.documentales{background:#0d9488 22;border:1px solid #0d948855;color:#5eead4}
+  .canal-icon.cine{background:#d97706 22;border:1px solid #d9770655;color:#fbbf24}
+  .canal-icon.noticias{background:#1d4ed822;border:1px solid #1d4ed855;color:#60a5fa}
+
+  .playing-indicator{
+    position:absolute;top:8px;right:8px;z-index:2;
+    background:var(--accent);border-radius:4px;
+    padding:2px 7px;font-size:9px;font-weight:600;letter-spacing:.8px;
+    color:#fff;text-transform:uppercase;display:none;
+  }
+  .canal-card.playing .playing-indicator{display:block}
+
+  .card-info{padding:10px 12px 12px}
+  .canal-nombre{font-size:13px;font-weight:500;color:var(--text);margin-bottom:4px;line-height:1.2}
+  .canal-cat{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+
+  /* PLAYER MODAL */
+  .player-overlay{
+    position:fixed;inset:0;z-index:200;
+    background:#000000ee;
+    display:none;align-items:center;justify-content:center;
+    padding:20px;
+  }
+  .player-overlay.open{display:flex}
+  .player-box{
+    width:100%;max-width:900px;
+    background:var(--surface);
+    border-radius:16px;border:1px solid var(--border2);
+    overflow:hidden;
+  }
+  .player-header{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:14px 20px;border-bottom:1px solid var(--border);
+  }
+  .player-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:var(--text)}
+  .player-cat-badge{
+    padding:3px 10px;border-radius:20px;font-size:10px;
+    font-weight:500;letter-spacing:.5px;text-transform:uppercase;
+    margin-left:10px;
+  }
+  .close-btn{
+    background:var(--surface2);border:1px solid var(--border2);
+    border-radius:8px;width:32px;height:32px;
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;color:var(--muted);font-size:18px;transition:all .2s;
+  }
+  .close-btn:hover{background:var(--accent);border-color:var(--accent);color:#fff}
+  .player-frame{
+    width:100%;aspect-ratio:16/9;
+    background:#000;border:none;
+  }
+  .player-footer{
+    padding:12px 20px;display:flex;align-items:center;justify-content:space-between;
+    border-top:1px solid var(--border);
+  }
+  .player-hint{font-size:12px;color:var(--muted)}
+
+  /* SECTION LABEL */
+  .section-label{
+    padding:18px 28px 4px;
+    font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:2px;font-weight:500;
+  }
+
+  /* EMPTY */
+  .empty{text-align:center;padding:60px 20px;color:var(--muted)}
+  .empty-icon{font-size:40px;margin-bottom:12px}
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar{width:6px}
+  ::-webkit-scrollbar-track{background:transparent}
+  ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">SIGNAL<span>TV</span></div>
+  <div class="live-badge">
+    <div class="live-dot"></div>
+    En vivo
+  </div>
+</div>
+
+<div class="tabs" id="tabs">
+  <button class="tab active" onclick="filtrar('todo',this)">Todos</button>
+  <button class="tab" onclick="filtrar('deportes',this)">⚽ Deportes</button>
+  <button class="tab" onclick="filtrar('entretenimiento',this)">🎬 Entretenimiento</button>
+  <button class="tab" onclick="filtrar('documentales',this)">🔭 Documentales</button>
+  <button class="tab" onclick="filtrar('cine',this)">🎥 Cine</button>
+</div>
+
+<div class="grid" id="grid"></div>
+
+<div class="player-overlay" id="overlay" onclick="cerrarPlayer(event)">
+  <div class="player-box" id="playerBox">
+    <div class="player-header">
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="player-title" id="playerTitle">Canal</span>
+        <span class="player-cat-badge" id="playerBadge"></span>
+      </div>
+      <div class="close-btn" onclick="cerrarPlayer()">✕</div>
+    </div>
+    <iframe class="player-frame" id="playerFrame" allowfullscreen allow="autoplay; fullscreen" referrerpolicy="no-referrer" sandbox="allow-scripts allow-same-origin allow-presentation allow-forms"></iframe>
+    <div class="player-footer">
+      <span class="player-hint">Si no carga, el canal puede estar offline</span>
+      <span class="live-badge" style="font-size:10px;padding:3px 10px">
+        <div class="live-dot"></div>En vivo
+      </span>
+    </div>
+  </div>
+</div>
+
+<script>
+const canales = [
+  {nombre:"ESPN Premium ARG",cat:"deportes",icon:"ESPN\nPREM\nARG",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fespnpremiumargentina.html&playeractivatenative=true"},
+  {nombre:"ESPN Premium",cat:"deportes",icon:"ESPN\nPREM",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fespnpremium.html&playeractivatenative=true"},
+  {nombre:"TyC Sports",cat:"deportes",icon:"TyC\nSPORTS",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Ftycsports.html&playeractivatenative=true"},
+  {nombre:"ESPN",cat:"deportes",icon:"ESPN",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fespn.html&playeractivatenative=true"},
+  {nombre:"ESPN Argentina",cat:"deportes",icon:"ESPN\nAR",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fespnar.html&playeractivatenative=true"},
+  {nombre:"DirecTV Sports",cat:"deportes",icon:"DTV\nSPORTS",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fdirectvsports.html&playeractivatenative=true"},
+  {nombre:"ESPN México",cat:"deportes",icon:"ESPN\nMEX",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fespnmexico.html&playeractivatenative=true"},
+  {nombre:"Liga 1",cat:"deportes",icon:"LIGA\n1",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fliga1.html&playeractivatenative=true"},
+  {nombre:"Liga 1 MAX",cat:"deportes",icon:"LIGA\n1 MAX",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fliga1max.html&playeractivatenative=true"},
+  {nombre:"Movistar Deportes",cat:"deportes",icon:"MOV\nDEP",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fmovistardeportes.html&playeractivatenative=true"},
+  {nombre:"Win Sports",cat:"deportes",icon:"WIN\nSPORTS",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fwinsports.html&playeractivatenative=true"},
+  {nombre:"Movistar Deportes ES",cat:"deportes",icon:"MOV\nDEP ES",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fmovistardeporteses.html&playeractivatenative=true"},
+  {nombre:"Latina",cat:"entretenimiento",icon:"LATINA",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Flatina.html&playeractivatenative=true"},
+  {nombre:"América TV",cat:"entretenimiento",icon:"ATV",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Famericatv.html&playeractivatenative=true"},
+  {nombre:"Space",cat:"entretenimiento",icon:"SPACE",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fspace.html&playeractivatenative=true"},
+  {nombre:"Warner Channel",cat:"entretenimiento",icon:"WARN\nER",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fwarnerchannel.html&playeractivatenative=true"},
+  {nombre:"TNT",cat:"entretenimiento",icon:"TNT",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Ftnt.html&playeractivatenative=true"},
+  {nombre:"Star Channel",cat:"entretenimiento",icon:"STAR",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fstarchannel.html&playeractivatenative=true"},
+  {nombre:"Cartoon Network",cat:"entretenimiento",icon:"CN",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fcartoonnetwork.html&playeractivatenative=true"},
+  {nombre:"Discovery A&E",cat:"documentales",icon:"A&E",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fdiscoveryaye.html&playeractivatenative=true"},
+  {nombre:"Discovery Channel",cat:"documentales",icon:"DISC",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fdiscoverychannel.html&playeractivatenative=true"},
+  {nombre:"Animal Planet",cat:"documentales",icon:"ANIM\nPLANET",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fanimalplanet.html&playeractivatenative=true"},
+  {nombre:"Nat Geo",cat:"documentales",icon:"NAT\nGEO",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fnatgeo.html&playeractivatenative=true"},
+  {nombre:"Cinemax",cat:"cine",icon:"CINE\nMAX",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fcinemax.html&playeractivatenative=true"},
+  {nombre:"Studio Universal",cat:"cine",icon:"STUD\nIO",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fstudiouniversal.html&playeractivatenative=true"},
+  {nombre:"Golden+",cat:"cine",icon:"GOLD\nEN+",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fgoldenplus.html&playeractivatenative=true"},
+  {nombre:"ATV",cat:"cine",icon:"ATV",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fatv.html&playeractivatenative=true"},
+  {nombre:"Cinecanal",cat:"cine",icon:"CINE\nCANAL",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fcinecanal.html&playeractivatenative=true"},
+];
+
+const catColors = {
+  deportes:{bg:'#e8302a18',border:'#e8302a55',color:'#ff6b6b',label:'Deportes',badge:'#e8302a22',badgeText:'#ff6b6b'},
+  entretenimiento:{bg:'#7c3aed22',border:'#7c3aed55',color:'#a78bfa',label:'Entretenimiento',badge:'#7c3aed22',badgeText:'#a78bfa'},
+  documentales:{bg:'#0d948822',border:'#0d948855',color:'#5eead4',label:'Documentales',badge:'#0d948822',badgeText:'#5eead4'},
+  cine:{bg:'#d9770622',border:'#d9770655',color:'#fbbf24',label:'Cine',badge:'#d9770622',badgeText:'#fbbf24'},
+};
+
+let filtroActivo = 'todo';
+let cardActiva = null;
+
+function renderGrid(filter){
+  const grid = document.getElementById('grid');
+  const lista = filter === 'todo' ? canales : canales.filter(c => c.cat === filter);
+  grid.innerHTML = lista.map((c,i) => {
+    const col = catColors[c.cat];
+    return `<div class="canal-card" onclick="abrirCanal(${canales.indexOf(c)})" id="card-${canales.indexOf(c)}">
+      <div class="playing-indicator">▶ Viendo</div>
+      <div class="card-thumb">
+        <div class="canal-icon" style="background:${col.bg};border:1px solid ${col.border};color:${col.color};white-space:pre;font-size:${c.icon.length>6?'10px':'12px'}">${c.icon}</div>
+      </div>
+      <div class="card-info">
+        <div class="canal-nombre">${c.nombre}</div>
+        <div class="canal-cat" style="color:${col.color}">${col.label}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function filtrar(cat, btn){
+  filtroActivo = cat;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  renderGrid(cat);
+}
+
+function abrirCanal(idx){
+  const c = canales[idx];
+  const col = catColors[c.cat];
+  if(cardActiva !== null){
+    const prev = document.getElementById('card-'+cardActiva);
+    if(prev) prev.classList.remove('playing');
+  }
+  cardActiva = idx;
+  const card = document.getElementById('card-'+idx);
+  if(card) card.classList.add('playing');
+
+  document.getElementById('playerTitle').textContent = c.nombre;
+  const badge = document.getElementById('playerBadge');
+  badge.textContent = col.label;
+  badge.style.background = col.badge;
+  badge.style.color = col.badgeText;
+
+  const frame = document.getElementById('playerFrame');
+  frame.src = c.url;
+  document.getElementById('overlay').classList.add('open');
+}
+
+function cerrarPlayer(e){
+  if(e && e.target !== document.getElementById('overlay')) return;
+  document.getElementById('overlay').classList.remove('open');
+  document.getElementById('playerFrame').src = '';
+  if(cardActiva !== null){
+    const card = document.getElementById('card-'+cardActiva);
+    if(card) card.classList.remove('playing');
+    cardActiva = null;
+  }
+}
+
+document.addEventListener('keydown', e => { if(e.key === 'Escape') cerrarPlayer(); });
+renderGrid('todo');
+</script>
+</body>
+</html>
