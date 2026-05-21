@@ -15,7 +15,6 @@
 }
 body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden}
 
-/* HEADER */
 .header{display:flex;align-items:center;justify-content:space-between;padding:16px 28px;border-bottom:1px solid var(--border);background:var(--surface);position:sticky;top:0;z-index:100}
 .logo{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;cursor:default;user-select:none}
 .logo span{color:var(--accent)}
@@ -24,28 +23,23 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .live-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:pulse 1.4s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 
-/* connection dot */
 .conn-dot{width:8px;height:8px;border-radius:50%;background:var(--muted2);transition:background .4s;flex-shrink:0}
 .conn-dot.online{background:#22c55e}
 .conn-dot.offline{background:#ef4444}
 
-/* TABS */
 .tabs{display:flex;gap:4px;padding:20px 28px 12px;overflow-x:auto;scrollbar-width:none}
 .tabs::-webkit-scrollbar{display:none}
 .tab{white-space:nowrap;padding:7px 18px;border-radius:20px;border:1px solid var(--border2);background:transparent;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;transition:all .2s}
 .tab:hover{border-color:var(--border3);color:var(--text)}
 .tab.active{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:500}
 
-/* SEARCH */
 .search-wrap{padding:0 28px;margin-bottom:4px}
 .search-input{width:100%;background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:10px 16px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:border-color .2s}
 .search-input:focus{border-color:var(--accent)}
 .search-input::placeholder{color:var(--muted2)}
 
-/* GRID */
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;padding:12px 28px 28px}
 
-/* CANAL CARD */
 .canal-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:all .25s;position:relative}
 .canal-card:hover{border-color:var(--border3);transform:translateY(-3px);background:var(--surface2)}
 .canal-card.playing{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
@@ -60,41 +54,88 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .canal-nombre{font-size:13px;font-weight:500;color:var(--text);margin-bottom:3px;line-height:1.2}
 .canal-cat{font-size:11px;text-transform:uppercase;letter-spacing:.5px}
 
-/* admin edit btn on card */
 .card-edit-btn{position:absolute;top:8px;left:8px;z-index:3;background:#000000bb;border:1px solid var(--border2);border-radius:6px;width:26px;height:26px;display:none;align-items:center;justify-content:center;cursor:pointer;font-size:13px;color:var(--muted);transition:all .2s}
 .card-edit-btn:hover{background:var(--accent);border-color:var(--accent);color:#fff}
 .admin-mode .card-edit-btn{display:flex}
 .admin-mode .canal-card{cursor:default}
 
-/* SKELETON */
-.skeleton{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;animation:shimmer 1.4s infinite}
-.skeleton-thumb{height:88px;background:var(--surface2)}
-.skeleton-info{padding:10px 12px 12px}
-.skeleton-line{height:11px;border-radius:4px;background:var(--surface3);margin-bottom:7px}
-.skeleton-line.short{width:50%}
-@keyframes shimmer{0%,100%{opacity:1}50%{opacity:.5}}
-
-/* PLAYER MODAL */
 .player-overlay{position:fixed;inset:0;z-index:200;background:#000000ee;display:none;align-items:center;justify-content:center;padding:20px}
 .player-overlay.open{display:flex}
-.player-box{width:100%;max-width:920px;background:var(--surface);border-radius:16px;border:1px solid var(--border2);overflow:hidden}
-.player-header{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border)}
+.player-box{width:100%;max-width:920px;background:var(--surface);border-radius:16px;border:1px solid var(--border2);overflow:hidden;position:relative}
+.player-header{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border);background:var(--surface)}
 .player-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px}
 .player-cat-badge{padding:3px 10px;border-radius:20px;font-size:10px;font-weight:500;letter-spacing:.5px;text-transform:uppercase;margin-left:10px}
 .close-btn{background:var(--surface2);border:1px solid var(--border2);border-radius:8px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);font-size:18px;transition:all .2s;flex-shrink:0}
 .close-btn:hover{background:var(--accent);border-color:var(--accent);color:#fff}
 .player-frame{width:100%;aspect-ratio:16/9;background:#000;border:none}
-.player-footer{padding:12px 20px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--border)}
+.player-footer{padding:12px 20px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--border);flex-wrap:wrap;gap:10px;background:var(--surface)}
 .player-hint{font-size:12px;color:var(--muted)}
 
-/* MODALS */
+/* ESTILOS DE BOTONES DE SERVIDORES */
+.server-buttons{display:flex;gap:8px;flex-wrap:wrap}
+.server-btn{background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:6px 14px;font-size:12px;cursor:pointer;transition:all .2s;color:var(--muted);font-weight:500;font-family:'DM Sans',sans-serif}
+.server-btn:hover:not(:disabled){border-color:var(--accent);color:var(--accent);background:var(--surface3);transform:translateY(-1px)}
+.server-btn.active{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 2px 8px rgba(232,48,42,0.3)}
+.server-btn.disabled,.server-btn:disabled{opacity:0.4;cursor:not-allowed;filter:grayscale(0.2)}
+
+/* BOTÓN FLOTANTE DE PANTALLA COMPLETA */
+.fullscreen-btn{
+  position:absolute;
+  bottom:70px;
+  right:20px;
+  width:45px;
+  height:45px;
+  border-radius:50%;
+  background:var(--accent);
+  border:none;
+  color:white;
+  font-size:22px;
+  cursor:pointer;
+  z-index:250;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:all .3s ease;
+  box-shadow:0 4px 15px rgba(0,0,0,0.3);
+  opacity:1;
+  visibility:visible;
+}
+.fullscreen-btn:hover{
+  transform:scale(1.1);
+  background:#c72420;
+}
+.fullscreen-btn.hide{
+  opacity:0;
+  visibility:hidden;
+  transition:opacity .5s ease, visibility .5s ease;
+}
+/* Modo pantalla completa del contenedor */
+.player-box:fullscreen{
+  max-width:100%;
+  height:100vh;
+  border-radius:0;
+}
+.player-box:fullscreen .player-header,
+.player-box:fullscreen .player-footer{
+  display:none;
+}
+.player-box:fullscreen .player-frame{
+  height:100vh;
+  aspect-ratio:auto;
+}
+.player-box:fullscreen .fullscreen-btn{
+  display:none;
+}
+
 .modal-overlay{position:fixed;inset:0;z-index:300;background:#000000cc;display:none;align-items:center;justify-content:center;padding:20px}
 .modal-overlay.open{display:flex}
 .modal-box{width:100%;max-width:420px;background:var(--surface);border-radius:16px;border:1px solid var(--border2);overflow:hidden}
-.modal-box.wide{max-width:500px}
-.modal-header{padding:20px 24px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.modal-box.wide{max-width:550px;max-height:90vh;display:flex;flex-direction:column}
+.modal-header{flex-shrink:0;padding:20px 24px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
 .modal-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px}
-.modal-body{padding:24px}
+.modal-body{flex:1;overflow-y:auto;padding:24px}
+.modal-body::-webkit-scrollbar{width:4px}
+.modal-body::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
 .field{margin-bottom:16px}
 .field label{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;font-weight:500}
 .field input,.field select,.field textarea{width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:10px 14px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:border-color .2s}
@@ -102,6 +143,10 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .field select option{background:var(--surface2)}
 .field textarea{resize:vertical;min-height:72px;line-height:1.5}
 .field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.servers-group{border:1px solid var(--border2);border-radius:8px;padding:12px;margin-bottom:16px}
+.servers-group-title{font-size:11px;color:var(--accent);margin-bottom:10px;font-weight:500}
+.servers-group .field{margin-bottom:10px}
+.servers-group .field:last-child{margin-bottom:0}
 .btn{width:100%;padding:11px;border-radius:8px;border:none;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:all .2s}
 .btn-accent{background:var(--accent);color:#fff}
 .btn-accent:hover{background:#c72420}
@@ -112,8 +157,9 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .modal-actions{display:flex;gap:10px;margin-top:20px}
 .modal-actions .btn{flex:1}
 .form-error{color:#fca5a5;font-size:12px;margin-top:8px;display:none}
+.checkbox-label{display:flex;align-items:center;gap:8px;cursor:pointer}
+.checkbox-label input{width:auto;margin:0}
 
-/* ADMIN PANEL */
 .admin-panel{position:fixed;top:0;right:0;bottom:0;width:340px;background:var(--surface);border-left:1px solid var(--border2);z-index:150;transform:translateX(100%);transition:transform .3s ease;display:flex;flex-direction:column}
 .admin-panel.open{transform:translateX(0)}
 .admin-panel-header{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
@@ -141,21 +187,17 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .admin-backdrop{position:fixed;inset:0;z-index:140;display:none}
 .admin-backdrop.open{display:block}
 
-/* SPINNER */
 .spinner-wrap{display:flex;align-items:center;justify-content:center;padding:80px 20px;grid-column:1/-1}
 .spinner{width:36px;height:36px;border:3px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* EMPTY */
 .empty{text-align:center;padding:60px 20px;color:var(--muted);grid-column:1/-1}
 
-/* TOAST */
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:12px 20px;font-size:13px;color:var(--text);z-index:999;transition:transform .3s ease;white-space:nowrap;pointer-events:none}
 .toast.show{transform:translateX(-50%) translateY(0)}
 .toast.success{border-color:#22c55e55;color:#86efac}
 .toast.error{border-color:#ef444455;color:#fca5a5}
 
-/* SCROLLBAR */
 ::-webkit-scrollbar{width:5px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
@@ -166,58 +208,59 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
   .grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;padding:8px 16px 20px}
   .tabs{padding:14px 16px 8px}
   .search-wrap{padding:0 16px}
+  .player-footer{flex-direction:column;align-items:stretch}
+  .server-buttons{justify-content:center}
+  .modal-box.wide{max-height:85vh}
+  .fullscreen-btn{bottom:60px;right:15px;width:40px;height:40px;font-size:18px}
+  .server-btn{padding:4px 10px;font-size:11px}
 }
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
 <div class="header">
   <div class="logo" id="logoBtn">SIGNAL<span>TV</span></div>
   <div class="header-right">
-    <div class="conn-dot" id="connDot" title="Estado de conexión"></div>
+    <div class="conn-dot" id="connDot"></div>
     <div class="live-badge"><div class="live-dot"></div>En vivo</div>
   </div>
 </div>
 
-<!-- SEARCH -->
 <div class="search-wrap" style="margin-top:16px">
-  <input class="search-input" id="searchInput" placeholder="🔍  Buscar canal..." oninput="buscar(this.value)">
+  <input class="search-input" id="searchInput" placeholder="🔍 Buscar canal...">
 </div>
 
-<!-- TABS -->
-<div class="tabs">
-  <button class="tab active" onclick="filtrar('todo',this)">Todos</button>
-  <button class="tab" onclick="filtrar('deportes',this)">⚽ Deportes</button>
-  <button class="tab" onclick="filtrar('entretenimiento',this)">🎬 Entretenimiento</button>
-  <button class="tab" onclick="filtrar('documentales',this)">🔭 Documentales</button>
-  <button class="tab" onclick="filtrar('cine',this)">🎥 Cine</button>
+<div class="tabs" id="tabsContainer">
+  <button class="tab active" data-cat="todo">Todos</button>
+  <button class="tab" data-cat="deportes">⚽ Deportes</button>
+  <button class="tab" data-cat="entretenimiento">🎬 Entretenimiento</button>
+  <button class="tab" data-cat="documentales">🔭 Documentales</button>
+  <button class="tab" data-cat="cine">🎥 Cine</button>
 </div>
 
-<!-- GRID -->
 <div class="grid" id="grid">
   <div class="spinner-wrap"><div class="spinner"></div></div>
 </div>
 
-<!-- PLAYER MODAL -->
-<div class="player-overlay" id="overlay" onclick="cerrarPlayer(event)">
-  <div class="player-box">
+<div class="player-overlay" id="overlay">
+  <div class="player-box" id="playerBox">
     <div class="player-header">
       <div style="display:flex;align-items:center;gap:8px">
         <span class="player-title" id="playerTitle">Canal</span>
         <span class="player-cat-badge" id="playerBadge"></span>
       </div>
-      <div class="close-btn" onclick="cerrarPlayer()">✕</div>
+      <div class="close-btn" id="closePlayerBtn">✕</div>
     </div>
-    <iframe class="player-frame" id="playerFrame" allowfullscreen allow="autoplay; fullscreen" referrerpolicy="no-referrer" sandbox="allow-scripts allow-same-origin allow-presentation allow-forms"></iframe>
+    <iframe class="player-frame" id="playerFrame" allow="autoplay; fullscreen; microphone; camera" allowfullscreen referrerpolicy="no-referrer" sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-presentation allow-modals allow-popups-to-escape-sandbox"></iframe>
     <div class="player-footer">
+      <div class="server-buttons" id="serverButtons"></div>
       <span class="player-hint">Si no carga, el canal puede estar offline momentáneamente</span>
       <span class="live-badge" style="font-size:10px;padding:3px 10px"><div class="live-dot"></div>En vivo</span>
     </div>
+    <button class="fullscreen-btn" id="fullscreenBtn" title="Pantalla completa">⛶</button>
   </div>
 </div>
 
-<!-- LOGIN MODAL -->
 <div class="modal-overlay" id="loginModal">
   <div class="modal-box">
     <div class="modal-header">
@@ -231,18 +274,17 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
       </div>
       <div class="field">
         <label>Contraseña</label>
-        <input type="password" id="loginPass" placeholder="••••••••" onkeydown="if(event.key==='Enter')intentarLogin()">
+        <input type="password" id="loginPass" placeholder="••••••••">
       </div>
-      <div class="form-error" id="loginError">Usuario o contraseña incorrectos</div>
+      <div class="form-error" id="loginError"></div>
       <div class="modal-actions">
         <button class="btn btn-ghost" onclick="cerrarModal('loginModal')">Cancelar</button>
-        <button class="btn btn-accent" onclick="intentarLogin()">Ingresar</button>
+        <button class="btn btn-accent" id="loginBtn">Ingresar</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- CANAL FORM MODAL -->
 <div class="modal-overlay" id="canalModal">
   <div class="modal-box wide">
     <div class="modal-header">
@@ -274,21 +316,37 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
         <label>Logo (URL de imagen, opcional)</label>
         <input type="url" id="fLogo" placeholder="https://ejemplo.com/logo.png">
       </div>
-      <div class="field">
-        <label>URL del Stream / Embed</label>
-        <textarea id="fUrl" placeholder="https://..." rows="3"></textarea>
+      
+      <div class="servers-group">
+        <div class="servers-group-title">🌐 Múltiples Servidores (Opcional)</div>
+        <div class="field">
+          <label>Servidor 1 (Principal)</label>
+          <textarea id="fUrl1" placeholder="https://..." rows="2"></textarea>
+        </div>
+        <div class="field">
+          <label>Servidor 2</label>
+          <textarea id="fUrl2" placeholder="https://..." rows="2"></textarea>
+        </div>
+        <div class="field">
+          <label>Servidor 3</label>
+          <textarea id="fUrl3" placeholder="https://..." rows="2"></textarea>
+        </div>
+        <div class="checkbox-label">
+          <input type="checkbox" id="fMultiServer">
+          <label style="margin:0;font-size:12px;text-transform:none">Activar selector de servidores en el reproductor</label>
+        </div>
       </div>
+      
       <div class="form-error" id="canalError"></div>
       <div class="modal-actions">
-        <button class="btn btn-danger" id="btnEliminarModal" onclick="eliminarCanalModal()" style="display:none">🗑 Eliminar</button>
+        <button class="btn btn-danger" id="btnEliminarModal" style="display:none">🗑 Eliminar</button>
         <button class="btn btn-ghost" onclick="cerrarModal('canalModal')">Cancelar</button>
-        <button class="btn btn-accent" id="btnGuardarCanal" onclick="guardarCanal()">Guardar</button>
+        <button class="btn btn-accent" id="btnGuardarCanal">Guardar</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- CHANGE PASSWORD MODAL -->
 <div class="modal-overlay" id="passModal">
   <div class="modal-box">
     <div class="modal-header">
@@ -311,62 +369,66 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
       <div class="form-error" id="passError"></div>
       <div class="modal-actions">
         <button class="btn btn-ghost" onclick="cerrarModal('passModal')">Cancelar</button>
-        <button class="btn btn-accent" onclick="cambiarPassword()">Guardar</button>
+        <button class="btn btn-accent" id="cambiarPassBtn">Guardar</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ADMIN BACKDROP -->
-<div class="admin-backdrop" id="adminBackdrop" onclick="cerrarAdminPanel()"></div>
+<div class="admin-backdrop" id="adminBackdrop"></div>
 
-<!-- ADMIN PANEL -->
 <div class="admin-panel" id="adminPanel">
   <div class="admin-panel-header">
     <div style="display:flex;align-items:center;gap:10px">
       <span class="admin-panel-title">Panel Admin</span>
       <span class="admin-tag">ADMIN</span>
     </div>
-    <div class="close-btn" onclick="cerrarAdminPanel()">✕</div>
+    <div class="close-btn" id="closeAdminPanelBtn">✕</div>
   </div>
   <div class="admin-panel-body">
     <div class="admin-section">
       <div class="admin-section-title">Canales (<span id="adminCount">0</span>)</div>
       <div class="admin-canal-list" id="adminCanalList"></div>
-      <button class="add-canal-btn" onclick="abrirFormCanal()">+ Agregar canal</button>
+      <button class="add-canal-btn" id="addCanalBtn">+ Agregar canal</button>
     </div>
     <div class="admin-section">
       <div class="admin-section-title">Exportar / Importar</div>
       <div style="display:flex;flex-direction:column;gap:8px">
-        <button class="btn btn-ghost" onclick="exportarJSON()">⬇ Exportar canales (JSON)</button>
+        <button class="btn btn-ghost" id="exportBtn">⬇ Exportar canales (JSON)</button>
         <label class="btn btn-ghost" style="text-align:center;cursor:pointer">
           ⬆ Importar JSON
-          <input type="file" accept=".json" style="display:none" onchange="importarJSON(this)">
+          <input type="file" accept=".json" id="importFileInput" style="display:none">
         </label>
       </div>
     </div>
     <div class="admin-section">
       <div class="admin-section-title">Cuenta</div>
       <div style="display:flex;flex-direction:column;gap:8px">
-        <button class="btn btn-ghost" onclick="abrirCambiarPass()">🔑 Cambiar contraseña</button>
-        <button class="btn btn-danger" onclick="cerrarSesion()">↩ Cerrar sesión</button>
+        <button class="btn btn-ghost" id="cambiarPassAdminBtn">🔑 Cambiar contraseña</button>
+        <button class="btn btn-danger" id="cerrarSesionBtn">↩ Cerrar sesión</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
-<!-- FIREBASE SDKs -->
+<script type="importmap">
+{
+  "imports": {
+    "firebase/app": "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js",
+    "firebase/firestore": "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"
+  }
+}
+</script>
+
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { initializeApp } from "firebase/app";
 import {
   getFirestore, collection, doc, getDocs, addDoc, setDoc,
   updateDoc, deleteDoc, onSnapshot, query, orderBy, getDoc
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+} from "firebase/firestore";
 
-// ── FIREBASE CONFIG ──
 const firebaseConfig = {
   apiKey: "AIzaSyCuDds6OLxiJBBo9SNsxfikaA80WEONAN0",
   authDomain: "signaltv-87f37.firebaseapp.com",
@@ -378,38 +440,37 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const db  = getFirestore(app);
+const db = getFirestore(app);
 
-// ── CANALES BASE (seed) ──
 const canalesBase = [
-  {nombre:"ESPN Premium ARG",cat:"deportes",icon:"ESPN\nPREM\nARG",logo:"",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fespnpremiumargentina.html&playeractivatenative=true",orden:0},
-  {nombre:"ESPN Premium",cat:"deportes",icon:"ESPN\nPREM",logo:"",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fespnpremium.html&playeractivatenative=true",orden:1},
-  {nombre:"TyC Sports",cat:"deportes",icon:"TyC\nSPORTS",logo:"",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Ftycsports.html&playeractivatenative=true",orden:2},
-  {nombre:"ESPN",cat:"deportes",icon:"ESPN",logo:"",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fespn.html&playeractivatenative=true",orden:3},
-  {nombre:"ESPN Argentina",cat:"deportes",icon:"ESPN\nAR",logo:"",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fespnar.html&playeractivatenative=true",orden:4},
-  {nombre:"DirecTV Sports",cat:"deportes",icon:"DTV\nSPORTS",logo:"",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fdirectvsports.html&playeractivatenative=true",orden:5},
-  {nombre:"ESPN México",cat:"deportes",icon:"ESPN\nMEX",logo:"",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fespnmexico.html&playeractivatenative=true",orden:6},
-  {nombre:"Liga 1",cat:"deportes",icon:"LIGA\n1",logo:"",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fliga1.html&playeractivatenative=true",orden:7},
-  {nombre:"Liga 1 MAX",cat:"deportes",icon:"LIGA\n1MAX",logo:"",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fliga1max.html&playeractivatenative=true",orden:8},
-  {nombre:"Movistar Deportes",cat:"deportes",icon:"MOV\nDEP",logo:"",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fmovistardeportes.html&playeractivatenative=true",orden:9},
-  {nombre:"Win Sports",cat:"deportes",icon:"WIN\nSPORTS",logo:"",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fwinsports.html&playeractivatenative=true",orden:10},
-  {nombre:"Movistar Deportes ES",cat:"deportes",icon:"MOV\nDEP ES",logo:"",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fmovistardeporteses.html&playeractivatenative=true",orden:11},
-  {nombre:"Latina",cat:"entretenimiento",icon:"LATINA",logo:"",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Flatina.html&playeractivatenative=true",orden:12},
-  {nombre:"América TV",cat:"entretenimiento",icon:"ATV",logo:"",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Famericatv.html&playeractivatenative=true",orden:13},
-  {nombre:"Space",cat:"entretenimiento",icon:"SPACE",logo:"",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fspace.html&playeractivatenative=true",orden:14},
-  {nombre:"Warner Channel",cat:"entretenimiento",icon:"WARN\nER",logo:"",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fwarnerchannel.html&playeractivatenative=true",orden:15},
-  {nombre:"TNT",cat:"entretenimiento",icon:"TNT",logo:"",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Ftnt.html&playeractivatenative=true",orden:16},
-  {nombre:"Star Channel",cat:"entretenimiento",icon:"STAR",logo:"",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fstarchannel.html&playeractivatenative=true",orden:17},
-  {nombre:"Cartoon Network",cat:"entretenimiento",icon:"CN",logo:"",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fcartoonnetwork.html&playeractivatenative=true",orden:18},
-  {nombre:"Discovery A&E",cat:"documentales",icon:"A&E",logo:"",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fdiscoveryaye.html&playeractivatenative=true",orden:19},
-  {nombre:"Discovery Channel",cat:"documentales",icon:"DISC",logo:"",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fdiscoverychannel.html&playeractivatenative=true",orden:20},
-  {nombre:"Animal Planet",cat:"documentales",icon:"ANIM\nPLNT",logo:"",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fanimalplanet.html&playeractivatenative=true",orden:21},
-  {nombre:"Nat Geo",cat:"documentales",icon:"NAT\nGEO",logo:"",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fnatgeo.html&playeractivatenative=true",orden:22},
-  {nombre:"Cinemax",cat:"cine",icon:"CINE\nMAX",logo:"",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fcinemax.html&playeractivatenative=true",orden:23},
-  {nombre:"Studio Universal",cat:"cine",icon:"STUD\nIO",logo:"",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fstudiouniversal.html&playeractivatenative=true",orden:24},
-  {nombre:"Golden+",cat:"cine",icon:"GOLD\nEN+",logo:"",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fgoldenplus.html&playeractivatenative=true",orden:25},
-  {nombre:"ATV",cat:"cine",icon:"ATV",logo:"",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fatv.html&playeractivatenative=true",orden:26},
-  {nombre:"Cinecanal",cat:"cine",icon:"CINE\nCANAL",logo:"",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fcinecanal.html&playeractivatenative=true",orden:27},
+  {nombre:"ESPN Premium ARG",cat:"deportes",icon:"ESPN\nPREM\nARG",logo:"",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fespnpremiumargentina.html&playeractivatenative=true",url2:"",url3:"",multiServer:false,orden:0},
+  {nombre:"ESPN Premium",cat:"deportes",icon:"ESPN\nPREM",logo:"",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fespnpremium.html&playeractivatenative=true",url2:"",url3:"",multiServer:false,orden:1},
+  {nombre:"TyC Sports",cat:"deportes",icon:"TyC\nSPORTS",logo:"",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Ftycsports.html&playeractivatenative=true",url2:"",url3:"",multiServer:false,orden:2},
+  {nombre:"ESPN",cat:"deportes",icon:"ESPN",logo:"",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fespn.html&playeractivatenative=true",url2:"",url3:"",multiServer:false,orden:3},
+  {nombre:"ESPN Argentina",cat:"deportes",icon:"ESPN\nAR",logo:"",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fespnar.html&playeractivatenative=true",url2:"",url3:"",multiServer:false,orden:4},
+  {nombre:"DirecTV Sports",cat:"deportes",icon:"DTV\nSPORTS",logo:"",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fdirectvsports.html&playeractivatenative=true",url2:"",url3:"",multiServer:false,orden:5},
+  {nombre:"ESPN México",cat:"deportes",icon:"ESPN\nMEX",logo:"",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fespnmexico.html&playeractivatenative=true",url2:"",url3:"",multiServer:false,orden:6},
+  {nombre:"Liga 1",cat:"deportes",icon:"LIGA\n1",logo:"",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fliga1.html&playeractivatenative=true",url2:"",url3:"",multiServer:false,orden:7},
+  {nombre:"Liga 1 MAX",cat:"deportes",icon:"LIGA\n1MAX",logo:"",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fliga1max.html&playeractivatenative=true",url2:"",url3:"",multiServer:false,orden:8},
+  {nombre:"Movistar Deportes",cat:"deportes",icon:"MOV\nDEP",logo:"",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fmovistardeportes.html&playeractivatenative=true",url2:"",url3:"",multiServer:false,orden:9},
+  {nombre:"Win Sports",cat:"deportes",icon:"WIN\nSPORTS",logo:"",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fwinsports.html&playeractivatenative=true",url2:"",url3:"",multiServer:false,orden:10},
+  {nombre:"Movistar Deportes ES",cat:"deportes",icon:"MOV\nDEP ES",logo:"",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fmovistardeporteses.html&playeractivatenative=true",url2:"",url3:"",multiServer:false,orden:11},
+  {nombre:"Latina",cat:"entretenimiento",icon:"LATINA",logo:"",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Flatina.html&playeractivatenative=true",url2:"",url3:"",multiServer:false,orden:12},
+  {nombre:"América TV",cat:"entretenimiento",icon:"ATV",logo:"",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Famericatv.html&playeractivatenative=true",url2:"",url3:"",multiServer:false,orden:13},
+  {nombre:"Space",cat:"entretenimiento",icon:"SPACE",logo:"",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fspace.html&playeractivatenative=true",url2:"",url3:"",multiServer:false,orden:14},
+  {nombre:"Warner Channel",cat:"entretenimiento",icon:"WARN\nER",logo:"",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fwarnerchannel.html&playeractivatenative=true",url2:"",url3:"",multiServer:false,orden:15},
+  {nombre:"TNT",cat:"entretenimiento",icon:"TNT",logo:"",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Ftnt.html&playeractivatenative=true",url2:"",url3:"",multiServer:false,orden:16},
+  {nombre:"Star Channel",cat:"entretenimiento",icon:"STAR",logo:"",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fstarchannel.html&playeractivatenative=true",url2:"",url3:"",multiServer:false,orden:17},
+  {nombre:"Cartoon Network",cat:"entretenimiento",icon:"CN",logo:"",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fcartoonnetwork.html&playeractivatenative=true",url2:"",url3:"",multiServer:false,orden:18},
+  {nombre:"Discovery A&E",cat:"documentales",icon:"A&E",logo:"",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fdiscoveryaye.html&playeractivatenative=true",url2:"",url3:"",multiServer:false,orden:19},
+  {nombre:"Discovery Channel",cat:"documentales",icon:"DISC",logo:"",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fdiscoverychannel.html&playeractivatenative=true",url2:"",url3:"",multiServer:false,orden:20},
+  {nombre:"Animal Planet",cat:"documentales",icon:"ANIM\nPLNT",logo:"",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fanimalplanet.html&playeractivatenative=true",url2:"",url3:"",multiServer:false,orden:21},
+  {nombre:"Nat Geo",cat:"documentales",icon:"NAT\nGEO",logo:"",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fnatgeo.html&playeractivatenative=true",url2:"",url3:"",multiServer:false,orden:22},
+  {nombre:"Cinemax",cat:"cine",icon:"CINE\nMAX",logo:"",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fcinemax.html&playeractivatenative=true",url2:"",url3:"",multiServer:false,orden:23},
+  {nombre:"Studio Universal",cat:"cine",icon:"STUD\nIO",logo:"",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fstudiouniversal.html&playeractivatenative=true",url2:"",url3:"",multiServer:false,orden:24},
+  {nombre:"Golden+",cat:"cine",icon:"GOLD\nEN+",logo:"",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fgoldenplus.html&playeractivatenative=true",url2:"",url3:"",multiServer:false,orden:25},
+  {nombre:"ATV",cat:"cine",icon:"ATV",logo:"",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fatv.html&playeractivatenative=true",url2:"",url3:"",multiServer:false,orden:26},
+  {nombre:"Cinecanal",cat:"cine",icon:"CINE\nCANAL",logo:"",url:"https://server.bixplay.online/servidor_nuevo/tv/get.php?id=https%3A%2F%2Fembed.saohgdasregions.fun%2Fembed2%2Fcinecanal.html&playeractivatenative=true",url2:"",url3:"",multiServer:false,orden:27},
 ];
 
 const catColors = {
@@ -419,94 +480,308 @@ const catColors = {
   cine:{bg:'#d9770622',border:'#d9770655',color:'#fbbf24',label:'Cine',badge:'#d9770622',badgeText:'#fbbf24'},
 };
 
-// ── ESTADO ──
-let canales       = []; // [{id, ...data}]
-let filtroActivo  = 'todo';
-let busquedaActiva= '';
-let cardActiva    = null;
+let canales = [];
+let filtroActivo = 'todo';
+let busquedaActiva = '';
+let cardActiva = null;
 let adminLogueado = sessionStorage.getItem('stv_session') === '1';
-let adminCreds    = {user:'admin', pass:'signal2024'};
-let unsubCanales  = null;
+let adminCreds = {user:'admin', pass:'signal2024'};
+let unsubCanales = null;
+let currentCanal = null;
+let currentServer = 1;
+let fullscreenTimeout = null;
 
-// ── CONNECTION STATUS ──
-const connDot = document.getElementById('connDot');
-window.addEventListener('online',  () => { connDot.className='conn-dot online'; toast('Conexión restaurada','success'); });
-window.addEventListener('offline', () => { connDot.className='conn-dot offline'; toast('Sin conexión — mostrando caché','error'); });
-connDot.className = 'conn-dot ' + (navigator.onLine ? 'online' : 'offline');
+const grid = document.getElementById('grid');
+const searchInput = document.getElementById('searchInput');
+const overlay = document.getElementById('overlay');
+const playerFrame = document.getElementById('playerFrame');
+const playerTitle = document.getElementById('playerTitle');
+const playerBadge = document.getElementById('playerBadge');
+const closePlayerBtn = document.getElementById('closePlayerBtn');
+const serverButtons = document.getElementById('serverButtons');
+const fullscreenBtn = document.getElementById('fullscreenBtn');
+const playerBox = document.getElementById('playerBox');
 
-// ── SECRET LOGO CLICK (5 clicks en 3s) ──
-let logoClicks = 0, logoTimer;
-document.getElementById('logoBtn').addEventListener('click', () => {
-  logoClicks++;
-  clearTimeout(logoTimer);
-  if(logoClicks >= 5){
-    logoClicks = 0;
-    if(adminLogueado) abrirAdminPanel();
-    else abrirLoginAdmin();
+function escHTML(s) { return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function toast(msg, type='') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast show' + (type ? ' ' + type : '');
+  setTimeout(() => { el.className = 'toast'; }, 2800);
+}
+
+function abrirModal(id) { document.getElementById(id).classList.add('open'); }
+function cerrarModal(id) { document.getElementById(id).classList.remove('open'); }
+window.cerrarModal = cerrarModal;
+
+function sanitizarURL(url) {
+  if (!url) return null;
+  const peligrosos = ['javascript:', 'data:text/html', 'about:blank', 'document.write', 'eval('];
+  for (let p of peligrosos) {
+    if (url.toLowerCase().includes(p)) {
+      return null;
+    }
+  }
+  return url;
+}
+
+function limpiarURLStream(url) {
+  if (!url) return null;
+  if (url.includes('bixplay.online') && !url.includes('autoplay')) {
+    return url + (url.includes('?') ? '&' : '?') + 'autoplay=1';
+  }
+  return url;
+}
+
+function getServerUrl(canal, server) {
+  if (server === 1) return canal.url;
+  if (server === 2) return canal.url2;
+  if (server === 3) return canal.url3;
+  return canal.url;
+}
+
+function cambiarServidor(server) {
+  if (!currentCanal) return;
+  currentServer = server;
+  const url = getServerUrl(currentCanal, server);
+  const urlSegura = sanitizarURL(url);
+  if (!urlSegura) {
+    toast('URL del servidor ' + server + ' no válida', 'error');
     return;
   }
-  logoTimer = setTimeout(() => { logoClicks = 0; }, 3000);
-});
-
-// ── FIRESTORE: cargar credenciales admin ──
-async function cargarCredenciales(){
-  try{
-    const snap = await getDoc(doc(db,'config','admin'));
-    if(snap.exists()){
-      adminCreds = snap.data();
-    } else {
-      // primer arranque: crear credenciales por defecto
-      await setDoc(doc(db,'config','admin'), {user:'admin', pass:'signal2024'});
+  const urlLimpia = limpiarURLStream(urlSegura);
+  playerFrame.src = urlLimpia;
+  toast('Cambiando a servidor ' + server, 'success');
+  
+  document.querySelectorAll('.server-btn').forEach(btn => {
+    btn.classList.remove('active');
+    if (parseInt(btn.dataset.server) === server) {
+      btn.classList.add('active');
     }
-  }catch(e){ console.warn('No se pudo cargar config:', e); }
-}
-
-// ── FIRESTORE: seed canales ──
-async function seedCanalesIfEmpty(){
-  const snap = await getDocs(collection(db,'canales'));
-  if(snap.empty){
-    toast('Iniciando base de datos...');
-    const batch = canalesBase.map((c,i) => addDoc(collection(db,'canales'), c));
-    await Promise.all(batch);
-    toast('Canales cargados en Firebase','success');
-  }
-}
-
-// ── FIRESTORE: suscripción en tiempo real ──
-function suscribirCanales(){
-  if(unsubCanales) unsubCanales();
-  const q = query(collection(db,'canales'), orderBy('orden','asc'));
-  unsubCanales = onSnapshot(q, snap => {
-    canales = snap.docs.map(d => ({id: d.id, ...d.data()}));
-    renderGrid();
-    if(adminLogueado) renderAdminList();
-  }, err => {
-    console.error('Firestore error:', err);
-    toast('Error de conexión con Firebase','error');
   });
 }
 
-// ── RENDER GRID ──
-function renderGrid(){
-  const grid = document.getElementById('grid');
+function renderServerButtons(canal) {
+  if (!canal.multiServer) {
+    serverButtons.innerHTML = '';
+    return;
+  }
+  
+  const servers = [
+    {num: 1, url: canal.url, label: '1'},
+    {num: 2, url: canal.url2, label: '2'},
+    {num: 3, url: canal.url3, label: '3'}
+  ];
+  
+  const buttonsHtml = servers.map(s => {
+    const hasUrl = s.url && s.url.trim() !== '';
+    const activeClass = (currentServer === s.num) ? 'active' : '';
+    const disabledClass = !hasUrl ? 'disabled' : '';
+    return `<button class="server-btn ${activeClass} ${disabledClass}" data-server="${s.num}" ${!hasUrl ? 'disabled' : ''}>Servidor ${s.label}</button>`;
+  }).join('');
+  
+  serverButtons.innerHTML = buttonsHtml;
+  
+  document.querySelectorAll('.server-btn').forEach(btn => {
+    if (!btn.disabled) {
+      btn.addEventListener('click', () => {
+        cambiarServidor(parseInt(btn.dataset.server));
+      });
+    }
+  });
+}
+
+function ocultarBotonFlotante() {
+  if (fullscreenTimeout) clearTimeout(fullscreenTimeout);
+  fullscreenBtn.classList.remove('hide');
+  fullscreenTimeout = setTimeout(() => {
+    fullscreenBtn.classList.add('hide');
+  }, 3000);
+}
+
+function mostrarBotonFlotante() {
+  if (fullscreenBtn) {
+    fullscreenBtn.classList.remove('hide');
+    ocultarBotonFlotante();
+  }
+}
+
+function toggleFullscreen() {
+  if (!document.fullscreenElement) {
+    playerBox.requestFullscreen().catch(err => {
+      toast('Error al entrar en pantalla completa: ' + err.message, 'error');
+    });
+  } else {
+    document.exitFullscreen();
+  }
+}
+
+document.addEventListener('fullscreenchange', () => {
+  if (document.fullscreenElement) {
+    fullscreenBtn.classList.add('hide');
+    if (fullscreenTimeout) clearTimeout(fullscreenTimeout);
+  } else {
+    fullscreenBtn.classList.remove('hide');
+    ocultarBotonFlotante();
+  }
+});
+
+playerBox.addEventListener('mousemove', mostrarBotonFlotante);
+playerBox.addEventListener('mouseenter', mostrarBotonFlotante);
+
+function bloquearPopupsEnIframe() {
+  try {
+    playerFrame.sandbox = 'allow-same-origin allow-scripts allow-forms allow-presentation allow-modals allow-popups-to-escape-sandbox';
+    
+    const iframeWindow = playerFrame.contentWindow;
+    if (iframeWindow) {
+      try {
+        iframeWindow.open = function(url, name, features) {
+          console.warn('Popup bloqueado en iframe:', url);
+          toast('⚠️ Ventana emergente bloqueada', 'error');
+          return null;
+        };
+      } catch(e) { }
+    }
+    
+    window.addEventListener('message', function(event) {
+      if (event.data && (event.data.type === 'popup' || event.data.action === 'open')) {
+        toast('⚠️ Popup bloqueado', 'error');
+        event.stopPropagation();
+      }
+    });
+    
+  } catch(e) { console.warn('Error configurando bloqueador:', e); }
+}
+
+function inyectarBloqueadorEnIframe() {
+  try {
+    const iframeDoc = playerFrame.contentDocument || playerFrame.contentWindow?.document;
+    if (iframeDoc) {
+      const script = iframeDoc.createElement('script');
+      script.textContent = `
+        var originalOpen = window.open;
+        window.open = function(url, name, features) {
+          console.warn('Popup bloqueado:', url);
+          parent.postMessage({ type: 'popup', url: url }, '*');
+          return null;
+        };
+        window.alert = function(msg) { console.warn('Alert bloqueado:', msg); };
+        window.confirm = function() { return false; };
+        window.onbeforeunload = null;
+      `;
+      iframeDoc.head.appendChild(script);
+    }
+  } catch(e) { }
+}
+
+function activarVolumenNativo() {
+  try {
+    const iframe = playerFrame;
+    if (iframe && iframe.contentWindow) {
+      const mouseEvent = new MouseEvent('mousemove', { bubbles: true });
+      iframe.dispatchEvent(mouseEvent);
+      
+      setTimeout(() => {
+        const clickEvent = new MouseEvent('click', { bubbles: true });
+        iframe.dispatchEvent(clickEvent);
+      }, 500);
+    }
+    
+    const unlockAudio = () => {
+      try {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        audioContext.resume();
+      } catch(e) {}
+    };
+    
+    overlay.addEventListener('click', unlockAudio, { once: true });
+    playerFrame.addEventListener('load', () => {
+      setTimeout(() => {
+        bloquearPopupsEnIframe();
+        inyectarBloqueadorEnIframe();
+      }, 1000);
+    });
+  } catch(e) { console.warn('Error:', e); }
+}
+
+function abrirCanal(id) {
+  const c = canales.find(x => x.id === id);
+  if (!c) { toast('Canal no encontrado', 'error'); return; }
+  
+  currentCanal = c;
+  currentServer = 1;
+  
+  let urlSegura = sanitizarURL(c.url);
+  if (!urlSegura) { toast('URL del canal no válida', 'error'); return; }
+  urlSegura = limpiarURLStream(urlSegura);
+  
+  const col = catColors[c.cat] || catColors.deportes;
+  if (cardActiva) {
+    const prevCard = document.getElementById('card-' + cardActiva);
+    if (prevCard) prevCard.classList.remove('playing');
+  }
+  cardActiva = id;
+  const card = document.getElementById('card-' + id);
+  if (card) card.classList.add('playing');
+  
+  playerTitle.textContent = c.nombre;
+  playerBadge.textContent = col.label;
+  playerBadge.style.background = col.badge;
+  playerBadge.style.color = col.badgeText;
+  
+  playerFrame.src = urlSegura;
+  
+  renderServerButtons(c);
+  
+  setTimeout(() => {
+    activarVolumenNativo();
+    bloquearPopupsEnIframe();
+  }, 500);
+  
+  overlay.classList.add('open');
+  
+  setTimeout(() => {
+    fullscreenBtn.classList.remove('hide');
+    ocultarBotonFlotante();
+  }, 100);
+}
+
+function cerrarPlayer() {
+  overlay.classList.remove('open');
+  playerFrame.src = '';
+  serverButtons.innerHTML = '';
+  currentCanal = null;
+  if (cardActiva) {
+    const card = document.getElementById('card-' + cardActiva);
+    if (card) card.classList.remove('playing');
+    cardActiva = null;
+  }
+  if (fullscreenTimeout) clearTimeout(fullscreenTimeout);
+}
+
+function renderGrid() {
   let lista = filtroActivo === 'todo' ? canales : canales.filter(c => c.cat === filtroActivo);
-  if(busquedaActiva){
+  if (busquedaActiva) {
     const q = busquedaActiva.toLowerCase();
     lista = lista.filter(c => c.nombre.toLowerCase().includes(q) || c.cat.toLowerCase().includes(q));
   }
-  if(!lista.length){
+  
+  if (!lista.length) {
     grid.innerHTML = '<div class="empty"><div style="font-size:36px;margin-bottom:10px">📡</div>No hay canales en esta categoría</div>';
     return;
   }
+  
   grid.innerHTML = lista.map(c => {
     const col = catColors[c.cat] || catColors.deportes;
     const iconHTML = c.logo
       ? `<img src="${escHTML(c.logo)}" alt="${escHTML(c.nombre)}" onerror="this.style.display='none'">`
-      : `<span class="canal-icon-text" style="color:${col.color}">${escHTML(c.icon||c.nombre.substring(0,4))}</span>`;
+      : `<span class="canal-icon-text" style="color:${col.color}">${escHTML(c.icon || c.nombre.substring(0,4))}</span>`;
     const isPlaying = cardActiva === c.id;
-    return `<div class="canal-card${isPlaying?' playing':''}" id="card-${c.id}" onclick="handleCardClick('${c.id}')">
+    return `<div class="canal-card${isPlaying ? ' playing' : ''}" data-id="${c.id}">
       <div class="playing-indicator">▶ Viendo</div>
-      <div class="card-edit-btn" title="Editar" onclick="event.stopPropagation();editarCanal('${c.id}')">✎</div>
+      <div class="card-edit-btn" data-id="${c.id}" data-edit="true">✎</div>
       <div class="card-thumb">
         <div class="canal-icon" style="background:${col.bg};border:1px solid ${col.border}">${iconHTML}</div>
       </div>
@@ -516,113 +791,79 @@ function renderGrid(){
       </div>
     </div>`;
   }).join('');
-  if(adminLogueado) grid.classList.add('admin-mode');
+  
+  if (adminLogueado) grid.classList.add('admin-mode');
   else grid.classList.remove('admin-mode');
+  
+  document.querySelectorAll('.canal-card').forEach(card => {
+    card.addEventListener('click', (e) => {
+      if (e.target.closest('.card-edit-btn')) return;
+      const id = card.dataset.id;
+      if (adminLogueado) editarCanal(id);
+      else abrirCanal(id);
+    });
+  });
+  
+  document.querySelectorAll('.card-edit-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const id = btn.dataset.id;
+      if (adminLogueado) editarCanal(id);
+    });
+  });
 }
 
-function escHTML(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-
-function handleCardClick(id){
-  if(adminLogueado){ editarCanal(id); return; }
-  abrirCanal(id);
-}
-
-function filtrar(cat, btn){
+function filtrar(cat, btn) {
   filtroActivo = cat;
   busquedaActiva = '';
-  document.getElementById('searchInput').value = '';
+  searchInput.value = '';
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   btn.classList.add('active');
   renderGrid();
 }
-window.filtrar = filtrar;
 
-function buscar(q){
-  busquedaActiva = q.trim();
+function buscar() {
+  busquedaActiva = searchInput.value.trim();
   renderGrid();
 }
-window.buscar = buscar;
 
-// ── PLAYER ──
-function abrirCanal(id){
-  const c = canales.find(x => x.id === id);
-  if(!c) return;
-  const col = catColors[c.cat] || catColors.deportes;
-  if(cardActiva){ const p=document.getElementById('card-'+cardActiva); if(p)p.classList.remove('playing'); }
-  cardActiva = id;
-  const card = document.getElementById('card-'+id); if(card)card.classList.add('playing');
-  document.getElementById('playerTitle').textContent = c.nombre;
-  const badge = document.getElementById('playerBadge');
-  badge.textContent = col.label; badge.style.background=col.badge; badge.style.color=col.badgeText;
-  document.getElementById('playerFrame').src = c.url;
-  document.getElementById('overlay').classList.add('open');
+fullscreenBtn.addEventListener('click', toggleFullscreen);
+
+async function cargarCredenciales() {
+  try {
+    const snap = await getDoc(doc(db, 'config', 'admin'));
+    if (snap.exists()) adminCreds = snap.data();
+    else await setDoc(doc(db, 'config', 'admin'), {user: 'admin', pass: 'signal2024'});
+  } catch(e) { console.warn(e); }
 }
 
-function cerrarPlayer(e){
-  if(e && e.target !== document.getElementById('overlay')) return;
-  document.getElementById('overlay').classList.remove('open');
-  document.getElementById('playerFrame').src = '';
-  if(cardActiva){ const card=document.getElementById('card-'+cardActiva); if(card)card.classList.remove('playing'); cardActiva=null; }
-}
-window.cerrarPlayer = cerrarPlayer;
-
-// ── ADMIN AUTH ──
-function abrirLoginAdmin(){
-  document.getElementById('loginUser').value='';
-  document.getElementById('loginPass').value='';
-  document.getElementById('loginError').style.display='none';
-  abrirModal('loginModal');
-  setTimeout(()=>document.getElementById('loginUser').focus(),150);
-}
-
-async function intentarLogin(){
-  const u = document.getElementById('loginUser').value.trim();
-  const p = document.getElementById('loginPass').value;
-  await cargarCredenciales();
-  if(u === adminCreds.user && p === adminCreds.pass){
-    adminLogueado = true;
-    sessionStorage.setItem('stv_session','1');
-    cerrarModal('loginModal');
-    renderGrid();
-    abrirAdminPanel();
-    toast('Bienvenido, '+u,'success');
-  } else {
-    document.getElementById('loginError').style.display='block';
-    document.getElementById('loginPass').value='';
-    document.getElementById('loginPass').focus();
+async function seedCanalesIfEmpty() {
+  const snap = await getDocs(collection(db, 'canales'));
+  if (snap.empty) {
+    toast('Iniciando base de datos...');
+    for (const c of canalesBase) await addDoc(collection(db, 'canales'), c);
+    toast('Canales cargados en Firebase', 'success');
   }
 }
-window.intentarLogin = intentarLogin;
 
-function cerrarSesion(){
-  adminLogueado = false;
-  sessionStorage.removeItem('stv_session');
-  cerrarAdminPanel();
-  renderGrid();
-  toast('Sesión cerrada');
+function suscribirCanales() {
+  if (unsubCanales) unsubCanales();
+  const q = query(collection(db, 'canales'), orderBy('orden', 'asc'));
+  unsubCanales = onSnapshot(q, snap => {
+    canales = snap.docs.map(d => ({id: d.id, ...d.data()}));
+    renderGrid();
+    if (adminLogueado) renderAdminList();
+  }, err => { toast('Error de conexión con Firebase', 'error'); });
 }
-window.cerrarSesion = cerrarSesion;
 
-// ── ADMIN PANEL ──
-function abrirAdminPanel(){
-  renderAdminList();
-  document.getElementById('adminPanel').classList.add('open');
-  document.getElementById('adminBackdrop').classList.add('open');
-}
-function cerrarAdminPanel(){
-  document.getElementById('adminPanel').classList.remove('open');
-  document.getElementById('adminBackdrop').classList.remove('open');
-}
-window.cerrarAdminPanel = cerrarAdminPanel;
-
-function renderAdminList(){
+function renderAdminList() {
   document.getElementById('adminCount').textContent = canales.length;
   const list = document.getElementById('adminCanalList');
   list.innerHTML = canales.map(c => {
     const col = catColors[c.cat] || catColors.deportes;
     const iconHTML = c.logo
-      ? `<img src="${escHTML(c.logo)}" alt="" onerror="this.style.display='none'">`
-      : `<span style="font-family:'Bebas Neue',sans-serif;font-size:9px;white-space:pre;color:${col.color}">${escHTML(c.icon||c.nombre.substring(0,4))}</span>`;
+      ? `<img src="${escHTML(c.logo)}" alt="">`
+      : `<span style="font-family:'Bebas Neue',sans-serif;font-size:9px;color:${col.color}">${escHTML(c.icon || c.nombre.substring(0,4))}</span>`;
     return `<div class="admin-canal-item">
       <div class="admin-canal-item-icon" style="background:${col.bg};border:1px solid ${col.border}">${iconHTML}</div>
       <div class="admin-canal-item-info">
@@ -630,220 +871,261 @@ function renderAdminList(){
         <div class="admin-canal-item-cat" style="color:${col.color}">${col.label}</div>
       </div>
       <div class="admin-canal-actions">
-        <button class="icon-btn edit-ic" title="Editar" onclick="editarCanal('${c.id}')">✎</button>
-        <button class="icon-btn delete" title="Eliminar" onclick="eliminarCanal('${c.id}')">✕</button>
+        <button class="icon-btn edit-ic" data-id="${c.id}">✎</button>
+        <button class="icon-btn delete" data-id="${c.id}">✕</button>
       </div>
     </div>`;
   }).join('');
+  
+  document.querySelectorAll('.admin-canal-actions .edit-ic').forEach(btn => {
+    btn.addEventListener('click', () => editarCanal(btn.dataset.id));
+  });
+  document.querySelectorAll('.admin-canal-actions .delete').forEach(btn => {
+    btn.addEventListener('click', () => eliminarCanal(btn.dataset.id));
+  });
 }
 
-// ── FORM CANAL ──
-function abrirFormCanal(docId=null){
+function abrirAdminPanel() {
+  renderAdminList();
+  document.getElementById('adminPanel').classList.add('open');
+  document.getElementById('adminBackdrop').classList.add('open');
+}
+
+function cerrarAdminPanel() {
+  document.getElementById('adminPanel').classList.remove('open');
+  document.getElementById('adminBackdrop').classList.remove('open');
+}
+
+function abrirLoginAdmin() {
+  document.getElementById('loginUser').value = '';
+  document.getElementById('loginPass').value = '';
+  document.getElementById('loginError').style.display = 'none';
+  abrirModal('loginModal');
+}
+
+async function intentarLogin() {
+  const u = document.getElementById('loginUser').value.trim();
+  const p = document.getElementById('loginPass').value;
+  await cargarCredenciales();
+  if (u === adminCreds.user && p === adminCreds.pass) {
+    adminLogueado = true;
+    sessionStorage.setItem('stv_session', '1');
+    cerrarModal('loginModal');
+    renderGrid();
+    abrirAdminPanel();
+    toast('Bienvenido, ' + u, 'success');
+  } else {
+    document.getElementById('loginError').style.display = 'block';
+    document.getElementById('loginError').textContent = 'Usuario o contraseña incorrectos';
+  }
+}
+
+function cerrarSesion() {
+  adminLogueado = false;
+  sessionStorage.removeItem('stv_session');
+  cerrarAdminPanel();
+  renderGrid();
+  toast('Sesión cerrada');
+}
+
+function abrirFormCanal(docId = null) {
   const esEditar = docId !== null;
   document.getElementById('canalModalTitle').textContent = esEditar ? 'Editar Canal' : 'Agregar Canal';
   document.getElementById('editDocId').value = docId || '';
   document.getElementById('btnEliminarModal').style.display = esEditar ? 'block' : 'none';
-  document.getElementById('canalError').style.display = 'none';
-  if(esEditar){
+  
+  if (esEditar) {
     const c = canales.find(x => x.id === docId);
-    if(!c) return;
-    document.getElementById('fNombre').value = c.nombre||'';
-    document.getElementById('fCat').value   = c.cat||'deportes';
-    document.getElementById('fIcon').value  = c.icon||'';
-    document.getElementById('fLogo').value  = c.logo||'';
-    document.getElementById('fUrl').value   = c.url||'';
+    if (c) {
+      document.getElementById('fNombre').value = c.nombre || '';
+      document.getElementById('fCat').value = c.cat || 'deportes';
+      document.getElementById('fIcon').value = c.icon || '';
+      document.getElementById('fLogo').value = c.logo || '';
+      document.getElementById('fUrl1').value = c.url || '';
+      document.getElementById('fUrl2').value = c.url2 || '';
+      document.getElementById('fUrl3').value = c.url3 || '';
+      document.getElementById('fMultiServer').checked = c.multiServer === true;
+    }
   } else {
-    document.getElementById('fNombre').value='';
-    document.getElementById('fCat').value='deportes';
-    document.getElementById('fIcon').value='';
-    document.getElementById('fLogo').value='';
-    document.getElementById('fUrl').value='';
+    document.getElementById('fNombre').value = '';
+    document.getElementById('fCat').value = 'deportes';
+    document.getElementById('fIcon').value = '';
+    document.getElementById('fLogo').value = '';
+    document.getElementById('fUrl1').value = '';
+    document.getElementById('fUrl2').value = '';
+    document.getElementById('fUrl3').value = '';
+    document.getElementById('fMultiServer').checked = false;
   }
   abrirModal('canalModal');
 }
-window.abrirFormCanal = abrirFormCanal;
 
-function editarCanal(id){
-  if(!adminLogueado) return;
+function editarCanal(id) {
+  if (!adminLogueado) return;
   abrirFormCanal(id);
 }
-window.editarCanal = editarCanal;
 
-async function guardarCanal(){
+async function guardarCanal() {
   const nombre = document.getElementById('fNombre').value.trim();
-  const cat    = document.getElementById('fCat').value;
-  const icon   = document.getElementById('fIcon').value.trim();
-  const logo   = document.getElementById('fLogo').value.trim();
-  const url    = document.getElementById('fUrl').value.trim();
-  const errEl  = document.getElementById('canalError');
-  if(!nombre || !url){ errEl.textContent='Nombre y URL son obligatorios'; errEl.style.display='block'; return; }
-  errEl.style.display='none';
-  const btn = document.getElementById('btnGuardarCanal');
-  btn.textContent='Guardando...'; btn.disabled=true;
-  const data = {nombre, cat, icon: icon||nombre.substring(0,6).toUpperCase(), logo, url};
+  const cat = document.getElementById('fCat').value;
+  const icon = document.getElementById('fIcon').value.trim();
+  const logo = document.getElementById('fLogo').value.trim();
+  const url1 = document.getElementById('fUrl1').value.trim();
+  const url2 = document.getElementById('fUrl2').value.trim();
+  const url3 = document.getElementById('fUrl3').value.trim();
+  const multiServer = document.getElementById('fMultiServer').checked;
+  const errEl = document.getElementById('canalError');
+  
+  if (!nombre || !url1) {
+    errEl.textContent = 'Nombre y Servidor 1 son obligatorios';
+    errEl.style.display = 'block';
+    return;
+  }
+  errEl.style.display = 'none';
+  
+  const data = { 
+    nombre, cat, 
+    icon: icon || nombre.substring(0, 6).toUpperCase(), 
+    logo, 
+    url: url1,
+    url2: url2 || '',
+    url3: url3 || '',
+    multiServer: multiServer
+  };
   const docId = document.getElementById('editDocId').value;
-  try{
-    if(docId){
-      await updateDoc(doc(db,'canales',docId), data);
-      toast('Canal actualizado','success');
+  
+  try {
+    if (docId) {
+      await updateDoc(doc(db, 'canales', docId), data);
+      toast('Canal actualizado', 'success');
     } else {
       data.orden = canales.length;
-      await addDoc(collection(db,'canales'), data);
-      toast('Canal agregado','success');
+      await addDoc(collection(db, 'canales'), data);
+      toast('Canal agregado', 'success');
     }
     cerrarModal('canalModal');
-  }catch(e){
-    toast('Error al guardar: '+e.message,'error');
-  }finally{
-    btn.textContent='Guardar'; btn.disabled=false;
+  } catch(e) {
+    toast('Error al guardar: ' + e.message, 'error');
   }
 }
-window.guardarCanal = guardarCanal;
 
-async function eliminarCanal(id){
-  const c = canales.find(x=>x.id===id);
-  if(!c || !confirm(`¿Eliminar "${c.nombre}"?`)) return;
-  try{
-    await deleteDoc(doc(db,'canales',id));
+async function eliminarCanal(id) {
+  const c = canales.find(x => x.id === id);
+  if (!c || !confirm(`¿Eliminar "${c.nombre}"?`)) return;
+  try {
+    await deleteDoc(doc(db, 'canales', id));
     toast('Canal eliminado');
-  }catch(e){ toast('Error al eliminar','error'); }
+  } catch(e) { toast('Error al eliminar', 'error'); }
 }
-window.eliminarCanal = eliminarCanal;
 
-async function eliminarCanalModal(){
+async function eliminarCanalModal() {
   const id = document.getElementById('editDocId').value;
   cerrarModal('canalModal');
   await eliminarCanal(id);
 }
-window.eliminarCanalModal = eliminarCanalModal;
 
-// ── PASSWORD ──
-function abrirCambiarPass(){
-  ['passActual','passNueva','passConfirm'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('passError').style.display='none';
+function abrirCambiarPass() {
+  document.getElementById('passActual').value = '';
+  document.getElementById('passNueva').value = '';
+  document.getElementById('passConfirm').value = '';
+  document.getElementById('passError').style.display = 'none';
   cerrarAdminPanel();
   abrirModal('passModal');
 }
-window.abrirCambiarPass = abrirCambiarPass;
 
-async function cambiarPassword(){
-  const actual  = document.getElementById('passActual').value;
-  const nueva   = document.getElementById('passNueva').value;
+async function cambiarPassword() {
+  const actual = document.getElementById('passActual').value;
+  const nueva = document.getElementById('passNueva').value;
   const confirm = document.getElementById('passConfirm').value;
-  const errEl   = document.getElementById('passError');
-  errEl.style.display='none';
-  if(actual !== adminCreds.pass){ errEl.textContent='Contraseña actual incorrecta'; errEl.style.display='block'; return; }
-  if(nueva.length < 4){ errEl.textContent='Mínimo 4 caracteres'; errEl.style.display='block'; return; }
-  if(nueva !== confirm){ errEl.textContent='Las contraseñas no coinciden'; errEl.style.display='block'; return; }
-  try{
-    await setDoc(doc(db,'config','admin'), {user: adminCreds.user, pass: nueva});
+  const errEl = document.getElementById('passError');
+  
+  if (actual !== adminCreds.pass) {
+    errEl.textContent = 'Contraseña actual incorrecta';
+    errEl.style.display = 'block';
+    return;
+  }
+  if (nueva.length < 4) {
+    errEl.textContent = 'Mínimo 4 caracteres';
+    errEl.style.display = 'block';
+    return;
+  }
+  if (nueva !== confirm) {
+    errEl.textContent = 'Las contraseñas no coinciden';
+    errEl.style.display = 'block';
+    return;
+  }
+  try {
+    await setDoc(doc(db, 'config', 'admin'), { user: adminCreds.user, pass: nueva });
     adminCreds.pass = nueva;
     cerrarModal('passModal');
-    toast('Contraseña actualizada','success');
-  }catch(e){ toast('Error al guardar','error'); }
+    toast('Contraseña actualizada', 'success');
+  } catch(e) { toast('Error al guardar', 'error'); }
 }
-window.cambiarPassword = cambiarPassword;
 
-// ── EXPORT / IMPORT ──
-function exportarJSON(){
-  const data = canales.map(({id,...rest})=>rest);
-  const blob = new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
-  const a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='signaltv-canales.json'; a.click();
-  toast('Canales exportados','success');
+function exportarJSON() {
+  const data = canales.map(({id, ...rest}) => rest);
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'signaltv-canales.json';
+  a.click();
+  toast('Canales exportados', 'success');
 }
-window.exportarJSON = exportarJSON;
 
-async function importarJSON(input){
-  const file = input.files[0]; if(!file) return;
+async function importarJSON(file) {
+  if (!file) return;
   const reader = new FileReader();
   reader.onload = async e => {
-    try{
+    try {
       const data = JSON.parse(e.target.result);
-      if(!Array.isArray(data)) throw new Error('Formato inválido');
-      toast('Importando '+data.length+' canales...');
-      const ops = data.map((c,i) => addDoc(collection(db,'canales'), {...c, orden: canales.length+i}));
-      await Promise.all(ops);
-      toast(data.length+' canales importados','success');
-    }catch(err){ toast('JSON inválido','error'); }
+      if (!Array.isArray(data)) throw new Error('Formato inválido');
+      toast('Importando ' + data.length + ' canales...');
+      for (const c of data) {
+        await addDoc(collection(db, 'canales'), { ...c, orden: canales.length });
+      }
+      toast(data.length + ' canales importados', 'success');
+    } catch(err) { toast('JSON inválido', 'error'); }
   };
   reader.readAsText(file);
-  input.value='';
-}
-window.importarJSON = importarJSON;
-
-// ── MODALS ──
-function abrirModal(id){ document.getElementById(id).classList.add('open'); }
-function cerrarModal(id){ document.getElementById(id).classList.remove('open'); }
-window.cerrarModal = cerrarModal;
-document.querySelectorAll('.modal-overlay').forEach(m => m.addEventListener('click', e => { if(e.target===m) m.classList.remove('open'); }));
-
-// ── TOAST ──
-let toastTimer;
-function toast(msg, type=''){
-  const el = document.getElementById('toast');
-  el.textContent = msg;
-  el.className = 'toast show'+(type?' '+type:'');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(()=>{ el.className='toast'; }, 2800);
 }
 
-// ── TECLADO ──
+searchInput.addEventListener('input', buscar);
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => filtrar(tab.dataset.cat, tab));
+});
+closePlayerBtn.addEventListener('click', cerrarPlayer);
+overlay.addEventListener('click', (e) => { if (e.target === overlay) cerrarPlayer(); });
+document.getElementById('logoBtn').addEventListener('click', () => {
+  if (adminLogueado) abrirAdminPanel();
+  else abrirLoginAdmin();
+});
+document.getElementById('loginBtn').addEventListener('click', intentarLogin);
+document.getElementById('closeAdminPanelBtn').addEventListener('click', cerrarAdminPanel);
+document.getElementById('adminBackdrop').addEventListener('click', cerrarAdminPanel);
+document.getElementById('addCanalBtn').addEventListener('click', () => abrirFormCanal());
+document.getElementById('btnGuardarCanal').addEventListener('click', guardarCanal);
+document.getElementById('btnEliminarModal').addEventListener('click', eliminarCanalModal);
+document.getElementById('exportBtn').addEventListener('click', exportarJSON);
+document.getElementById('importFileInput').addEventListener('change', (e) => importarJSON(e.target.files[0]));
+document.getElementById('cambiarPassAdminBtn').addEventListener('click', abrirCambiarPass);
+document.getElementById('cambiarPassBtn').addEventListener('click', cambiarPassword);
+document.getElementById('cerrarSesionBtn').addEventListener('click', cerrarSesion);
+document.querySelectorAll('.modal-overlay').forEach(m => {
+  m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); });
+});
 document.addEventListener('keydown', e => {
-  if(e.key==='Escape'){
+  if (e.key === 'Escape') {
     cerrarPlayer();
-    document.querySelectorAll('.modal-overlay.open').forEach(m=>m.classList.remove('open'));
+    document.querySelectorAll('.modal-overlay.open').forEach(m => m.classList.remove('open'));
   }
 });
 
-// ── INIT ──
-async function init(){
+async function init() {
   await cargarCredenciales();
   await seedCanalesIfEmpty();
   suscribirCanales();
-  // restaurar sesión admin si estaba activa
-  if(adminLogueado) renderGrid();
+  if (adminLogueado) renderGrid();
+  fullscreenBtn.classList.add('hide');
 }
-
-// ========== CÓDIGO DE DIAGNÓSTICO - AGREGAR AQUÍ ==========
-console.log('=== DIAGNÓSTICO ===');
-console.log('canales cargados:', canales.length);
-console.log('adminLogueado:', adminLogueado);
-
-// Forzar una prueba manual
-window.testAbrirCanal = function(id) {
-    console.log('Test manual - abriendo canal:', id);
-    const c = canales.find(x => x.id === id);
-    console.log('Canal encontrado:', c);
-    if(c) {
-        abrirCanal(id);
-    } else {
-        console.error('Canal no encontrado:', id);
-    }
-};
-
-// Modificar handleCardClick para diagnóstico
-const originalHandleClick = handleCardClick;
-window.handleCardClick = function(id) {
-    console.log('handleCardClick llamado con id:', id, 'adminLogueado:', adminLogueado);
-    if(adminLogueado){ 
-        console.log('Modo admin, editando canal');
-        editarCanal(id); 
-        return; 
-    }
-    console.log('Abriendo canal normal:', id);
-    abrirCanal(id);
-};
-
-// Verificar que el evento click funciona
-document.addEventListener('click', function(e) {
-    const card = e.target.closest('.canal-card');
-    if(card && !adminLogueado) {
-        console.log('Click detectado en card:', card.id);
-        const id = card.id.replace('card-', '');
-        console.log('ID extraído:', id);
-    }
-});
-// ========== FIN DIAGNÓSTICO ==========
 
 init();
 </script>
