@@ -2,7 +2,14 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0a0a0f">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SignalTV">
+<meta name="description" content="SignalTV – Canales en vivo">
+<link rel="manifest" href="manifest.json">
 <title>SignalTV</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
@@ -61,7 +68,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 
 .player-overlay{position:fixed;inset:0;z-index:200;background:#000000ee;display:none;align-items:center;justify-content:center;padding:20px}
 .player-overlay.open{display:flex}
-.player-box{width:100%;max-width:920px;background:var(--surface);border-radius:16px;border:1px solid var(--border2);overflow:hidden;position:relative}
+.player-box{width:100%;max-width:920px;background:var(--surface);border-radius:16px;border:1px solid var(--border2);overflow:hidden;position:relative;isolation:isolate}
 .player-header{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border);background:var(--surface)}
 .player-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px}
 .player-cat-badge{padding:3px 10px;border-radius:20px;font-size:10px;font-weight:500;letter-spacing:.5px;text-transform:uppercase;margin-left:10px}
@@ -251,7 +258,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
       </div>
       <div class="close-btn" id="closePlayerBtn">✕</div>
     </div>
-    <iframe class="player-frame" id="playerFrame" allow="autoplay; fullscreen; microphone; camera" allowfullscreen referrerpolicy="no-referrer" sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-presentation allow-modals allow-popups-to-escape-sandbox"></iframe>
+    <iframe class="player-frame" id="playerFrame" allow="autoplay; fullscreen; microphone; camera" allowfullscreen referrerpolicy="no-referrer" sandbox="allow-same-origin allow-scripts allow-popups allow-popups-to-escape-sandbox allow-forms allow-presentation allow-modals"></iframe>
     <div class="player-footer">
       <div class="server-buttons" id="serverButtons"></div>
       <span class="player-hint">Si no carga, el canal puede estar offline momentáneamente</span>
@@ -501,6 +508,20 @@ const closePlayerBtn = document.getElementById('closePlayerBtn');
 const serverButtons = document.getElementById('serverButtons');
 const fullscreenBtn = document.getElementById('fullscreenBtn');
 const playerBox = document.getElementById('playerBox');
+const connDot = document.getElementById('connDot');
+
+function actualizarConexion() {
+  if (navigator.onLine) {
+    connDot.classList.remove('offline');
+    connDot.classList.add('online');
+  } else {
+    connDot.classList.remove('online');
+    connDot.classList.add('offline');
+  }
+}
+actualizarConexion();
+window.addEventListener('online', actualizarConexion);
+window.addEventListener('offline', actualizarConexion);
 
 function escHTML(s) { return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
@@ -632,8 +653,7 @@ playerBox.addEventListener('mouseenter', mostrarBotonFlotante);
 
 function bloquearPopupsEnIframe() {
   try {
-    playerFrame.sandbox = 'allow-same-origin allow-scripts allow-forms allow-presentation allow-modals allow-popups-to-escape-sandbox';
-    
+    // No re-asignar sandbox aquí: ya está definido en el HTML y reasignarlo recarga el iframe
     const iframeWindow = playerFrame.contentWindow;
     if (iframeWindow) {
       try {
@@ -1079,8 +1099,9 @@ async function importarJSON(file) {
       const data = JSON.parse(e.target.result);
       if (!Array.isArray(data)) throw new Error('Formato inválido');
       toast('Importando ' + data.length + ' canales...');
-      for (const c of data) {
-        await addDoc(collection(db, 'canales'), { ...c, orden: canales.length });
+      const baseOrden = canales.length;
+      for (let i = 0; i < data.length; i++) {
+        await addDoc(collection(db, 'canales'), { ...data[i], orden: baseOrden + i });
       }
       toast(data.length + ' canales importados', 'success');
     } catch(err) { toast('JSON inválido', 'error'); }
@@ -1125,6 +1146,10 @@ async function init() {
   suscribirCanales();
   if (adminLogueado) renderGrid();
   fullscreenBtn.classList.add('hide');
+  // Registrar Service Worker para PWA
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+  }
 }
 
 init();
