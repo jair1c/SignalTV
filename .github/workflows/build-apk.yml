@@ -3,8 +3,11 @@ name: Build & Release APK
 on:
   push:
     tags:
-      - 'v*'          # Dispara con: git tag v1.0.0 && git push --tags
-  workflow_dispatch:  # También permite ejecutar manualmente desde GitHub
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -12,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout código
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Setup JDK 17
@@ -20,25 +23,25 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-          cache: gradle
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Cache Gradle
+      - name: Setup Gradle 8.4
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: '8.4'
+
+      - name: Cache Gradle dependencies
         uses: actions/cache@v4
         with:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-          key: gradle-${{ hashFiles('android-app/**/*.gradle*', 'android-app/**/gradle-wrapper.properties') }}
+          key: gradle-${{ hashFiles('android-app/**/*.gradle*') }}
           restore-keys: gradle-
 
-      - name: Dar permisos a gradlew
-        run: chmod +x android-app/gradlew
-        working-directory: ${{ github.workspace }}
-
-      - name: Generar keystore desde secret
+      - name: Decodificar keystore
         env:
           KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
         run: |
@@ -52,22 +55,29 @@ jobs:
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: |
           cd android-app
-          ./gradlew assembleRelease --no-daemon
+          gradle assembleRelease --no-daemon --stacktrace
 
-      - name: Renombrar APK
+      - name: Preparar APK
         run: |
           mkdir -p output
-          cp android-app/app/build/outputs/apk/release/app-release.apk \
-             output/SignalTV-${{ github.ref_name }}.apk
+          APK_PATH="android-app/app/build/outputs/apk/release/app-release.apk"
+          if [ -f "$APK_PATH" ]; then
+            cp "$APK_PATH" "output/SignalTV-${{ github.ref_name }}.apk"
+            echo "APK generado: $(du -sh output/*.apk)"
+          else
+            echo "ERROR: APK no encontrado en $APK_PATH"
+            find android-app/app/build -name "*.apk" 2>/dev/null || echo "No se encontraron APKs"
+            exit 1
+          fi
 
-      - name: Upload APK como artifact
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: SignalTV-APK
           path: output/SignalTV-*.apk
           retention-days: 30
 
-      - name: Crear GitHub Release
+      - name: Crear Release en GitHub
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
@@ -75,15 +85,15 @@ jobs:
           name: SignalTV ${{ github.ref_name }}
           body: |
             ## SignalTV ${{ github.ref_name }}
-            
+
             ### Instalación
             1. Descarga el APK
-            2. En Android: Ajustes → Seguridad → Fuentes desconocidas ✓
-            3. Instala el APK
-            
+            2. Android: **Ajustes → Seguridad → Fuentes desconocidas** ✓
+            3. Instala el APK descargado
+
             ### Compatibilidad
-            - Android 5.0+ (Phone / Tablet)
-            - Android TV / Fire TV / TV Box
+            - Android 5.0+ (teléfonos y tablets)
+            - Android TV / Fire TV Stick / TV Box
           draft: false
           prerelease: false
         env:
