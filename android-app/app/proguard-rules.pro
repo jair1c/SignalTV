@@ -1,0 +1,7 @@
+-keepattributes *Annotation*
+-keepattributes SourceFile,LineNumberTable
+-keep public class * extends android.app.Activity
+-keep public class * extends androidx.fragment.app.FragmentActivity
+-keep class com.signaltv.app.** { *; }
+-dontwarn okhttp3.**
+-dontwarn okio.**
