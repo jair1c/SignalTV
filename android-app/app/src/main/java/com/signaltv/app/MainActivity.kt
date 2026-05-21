@@ -14,7 +14,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var progressBar: ProgressBar
 
     companion object {
-        const val APP_URL = "https://signaltv.vercel.app" // ← Cambia por tu URL de Vercel
+        const val APP_URL = "https://signal-tv.vercel.app/" // ← Cambia por tu URL de Vercel
     }
 
     @SuppressLint("SetJavaScriptEnabled")
