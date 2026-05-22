@@ -97,7 +97,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
   display:flex;
   align-items:center;
   justify-content:center;
-  transition:all .3s ease;
+  transition:opacity .3s ease, visibility .3s ease, transform .2s ease;
   box-shadow:0 4px 15px rgba(0,0,0,0.3);
   opacity:1;
   visibility:visible;
@@ -106,10 +106,28 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
   transform:scale(1.1);
   background:#c72420;
 }
+/* En web normal: se oculta tras inactividad */
 .fullscreen-btn.hide{
   opacity:0;
   visibility:hidden;
-  transition:opacity .5s ease, visibility .5s ease;
+}
+/* En TV: siempre visible, solo se oculta cuando FS activo */
+[data-platform='androidtv'] .fullscreen-btn{
+  opacity:1 !important;
+  visibility:visible !important;
+  bottom:80px;
+  width:52px;
+  height:52px;
+  font-size:26px;
+}
+[data-platform='androidtv'] .fullscreen-btn.hide{
+  opacity:1 !important;
+  visibility:visible !important;
+}
+[data-platform='androidtv'] .fullscreen-btn.fs-active{
+  opacity:0 !important;
+  visibility:hidden !important;
+  pointer-events:none;
 }
 /* Modo pantalla completa del contenedor */
 .player-box:fullscreen{

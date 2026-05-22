@@ -36,8 +36,10 @@
         <activity
             android:name=".TvActivity"
             android:exported="true"
-            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:banner="@drawable/banner"
+            android:configChanges="orientation|screenSize|keyboardHidden|screenLayout|smallestScreenSize"
             android:screenOrientation="landscape"
+            android:supportsPictureInPicture="true"
             android:theme="@style/Theme.SignalTV">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
