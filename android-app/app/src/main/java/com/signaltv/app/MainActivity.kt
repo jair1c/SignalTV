@@ -14,14 +14,13 @@ class MainActivity : AppCompatActivity() {
     private lateinit var progressBar: ProgressBar
 
     companion object {
-        const val APP_URL = "https://signal-tv.vercel.app" // ← Cambia por tu URL de Vercel
+        const val APP_URL = "https://signal-tv.vercel.app"
     }
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Pantalla completa inmersiva
         window.decorView.systemUiVisibility = (
             View.SYSTEM_UI_FLAG_FULLSCREEN or
             View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or
@@ -51,14 +50,16 @@ class MainActivity : AppCompatActivity() {
             allowFileAccess = true
             allowContentAccess = true
             mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
-            cacheMode = WebSettings.LOAD_DEFAULT
+            cacheMode = WebSettings.LOAD_CACHE_ELSE_NETWORK
             useWideViewPort = true
             loadWithOverviewMode = true
             setSupportZoom(false)
             builtInZoomControls = false
             displayZoomControls = false
-            userAgentString = userAgentString.replace("Mobile", "SignalTV/1.0 Mobile")
+            userAgentString = userAgentString.replace("Mobile", "SignalTV/1.0")
         }
+
+        webView.setLayerType(View.LAYER_TYPE_HARDWARE, null)
 
         webView.webViewClient = object : WebViewClient() {
             override fun onPageStarted(view: WebView?, url: String?, favicon: android.graphics.Bitmap?) {
@@ -68,14 +69,12 @@ class MainActivity : AppCompatActivity() {
                 progressBar.visibility = View.GONE
             }
             override fun onReceivedError(view: WebView?, request: WebResourceRequest?, error: WebResourceError?) {
-                // Si falla la carga, reintentar con caché
                 if (request?.isForMainFrame == true) {
                     view?.loadUrl("$APP_URL?retry=1")
                 }
             }
             override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
                 val url = request?.url?.toString() ?: return false
-                // Mantener navegación dentro del WebView para la app
                 return !url.startsWith("http://") && !url.startsWith("https://")
             }
         }
@@ -85,7 +84,7 @@ class MainActivity : AppCompatActivity() {
                 progressBar.progress = newProgress
                 if (newProgress == 100) progressBar.visibility = View.GONE
             }
-            // Permitir reproducción de video en pantalla completa
+
             private var customView: View? = null
             private var customViewCallback: CustomViewCallback? = null
 

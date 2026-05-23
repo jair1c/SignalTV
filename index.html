@@ -282,6 +282,42 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
   .fullscreen-btn{bottom:60px;right:15px;width:40px;height:40px;font-size:18px}
   .server-btn{padding:4px 10px;font-size:11px}
 }
+
+/* Optimizaciones específicas para TV */
+@media (any-pointer: coarse) {
+    .canal-card, .tab, button {
+        min-height: 48px;
+        min-width: 48px;
+    }
+}
+
+*:focus-visible {
+    outline: 2px solid #e8302a !important;
+    outline-offset: 4px !important;
+}
+
+.canal-card, .tab, .server-btn {
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+.canvas-card, .grid {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+}
+
+#tvToast {
+    transition: opacity 0.2s ease;
+    font-size: 18px !important;
+    padding: 14px 28px !important;
+    background: rgba(0,0,0,0.9) !important;
+    border-radius: 12px !important;
+}
 </style>
 </head>
 <body>
@@ -1275,5 +1311,50 @@ if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/sw.js').catch(() => {});
 }
 </script>
+
+<!-- Funcionalidades adicionales para TV -->
+<script>
+(function() {
+    // Inicializar precarga de canales cuando estén disponibles
+    if (window.canales && window.canales.length > 0) {
+        setTimeout(function() {
+            if (window.__startPreload) {
+                window.__startPreload(window.canales);
+            }
+        }, 2000);
+    }
+    
+    // Detectar si es TV y ajustar UI
+    if (navigator.userAgent.includes('AndroidTV') || document.body.getAttribute('data-platform') === 'androidtv') {
+        // Aumentar tamaño de elementos para TV
+        var style = document.createElement('style');
+        style.textContent = `
+            .canal-card { min-height: 140px; }
+            .tab { padding: 10px 24px; font-size: 16px; }
+            .server-btn { padding: 10px 20px; font-size: 14px; }
+            .close-btn { width: 48px; height: 48px; font-size: 24px; }
+        `;
+        document.head.appendChild(style);
+    }
+    
+    // Función para mostrar overlay de canal cambiado
+    window.showChannelChangeOverlay = function(channelName, channelIcon) {
+        var overlay = document.getElementById('canalOverlay');
+        if (overlay) {
+            var nombreEl = document.getElementById('canalOverlayNombre');
+            var iconEl = document.getElementById('canalOverlayIcon');
+            if (nombreEl) nombreEl.textContent = channelName;
+            if (iconEl && channelIcon) {
+                iconEl.innerHTML = channelIcon;
+            }
+            overlay.classList.add('show');
+            setTimeout(function() {
+                overlay.classList.remove('show');
+            }, 2500);
+        }
+    };
+})();
+</script>
+
 </body>
 </html>

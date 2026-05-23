@@ -5,3 +5,12 @@
 -keep class com.signaltv.app.** { *; }
 -dontwarn okhttp3.**
 -dontwarn okio.**
+
+# WebView optimizaciones
+-keepclassmembers class * {
+    @android.webkit.JavascriptInterface <methods>;
+}
+
+# Optimización de rendimiento
+-keep class android.webkit.** { *; }
+-dontoptimize
