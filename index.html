@@ -45,6 +45,10 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .canal-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:all .25s;position:relative}
 .canal-card:hover{border-color:var(--border3);transform:translateY(-3px);background:var(--surface2)}
 .canal-card.playing{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.canal-card.last-seen{border-color:#ffffff33;box-shadow:0 0 0 1px #ffffff22}
+.canal-card.last-seen::after{content:'↩ Último visto';position:absolute;bottom:0;left:0;right:0;
+  background:linear-gradient(transparent,rgba(0,0,0,.7));color:#aaa;font-size:9px;
+  text-align:center;padding:6px 4px 4px;letter-spacing:.5px;text-transform:uppercase}
 .card-thumb{height:88px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
 .card-thumb::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--surface2) 0%,#0a0a1a 100%)}
 .canal-icon{position:relative;z-index:1;width:54px;height:54px;border-radius:10px;display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.15;overflow:hidden;flex-direction:column}
@@ -71,6 +75,26 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .close-btn:hover{background:var(--accent);border-color:var(--accent);color:#fff}
 .player-frame{width:100%;aspect-ratio:16/9;background:#000;border:none}
 .player-footer{padding:12px 20px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--border);flex-wrap:wrap;gap:10px;background:var(--surface)}
+
+/* ── Punto 10: overlay error de stream ── */
+.stream-error{
+  position:absolute;inset:0;background:#000;
+  display:none;flex-direction:column;align-items:center;justify-content:center;
+  gap:16px;z-index:5;
+}
+.stream-error.show{display:flex}
+.stream-error-icon{font-size:44px;opacity:.5}
+.stream-error-msg{color:var(--muted);font-size:14px;text-align:center;max-width:260px;line-height:1.5}
+.stream-error-retry{
+  background:var(--accent);color:#fff;border:none;border-radius:8px;
+  padding:10px 24px;font-family:'DM Sans',sans-serif;font-size:14px;
+  font-weight:500;cursor:pointer;transition:background .2s;
+}
+.stream-error-retry:hover{background:#c72420}
+.stream-timeout-bar{
+  position:absolute;bottom:0;left:0;height:3px;background:var(--accent);
+  width:100%;transform-origin:left;transition:none;
+}
 .player-hint{font-size:12px;color:var(--muted)}
 
 /* ESTILOS DE BOTONES DE SERVIDORES */
@@ -218,6 +242,30 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .toast.success{border-color:#22c55e55;color:#86efac}
 .toast.error{border-color:#ef444455;color:#fca5a5}
 
+/* ── Punto 5: overlay nombre canal ── */
+.canal-overlay{
+  position:fixed;top:0;left:0;right:0;z-index:210;
+  padding:18px 28px;
+  display:flex;align-items:center;gap:14px;
+  background:linear-gradient(180deg,rgba(0,0,0,.85) 0%,transparent 100%);
+  pointer-events:none;
+  opacity:0;transform:translateY(-100%);
+  transition:opacity .35s ease,transform .35s ease;
+}
+.canal-overlay.show{opacity:1;transform:translateY(0)}
+.canal-overlay-icon{
+  width:44px;height:44px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Bebas Neue',sans-serif;font-size:11px;
+  text-align:center;line-height:1.1;flex-shrink:0;
+}
+.canal-overlay-info{}
+.canal-overlay-nombre{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:#fff}
+.canal-overlay-cat{font-size:11px;text-transform:uppercase;letter-spacing:1px;margin-top:2px}
+.live-badge-sm{display:inline-flex;align-items:center;gap:4px;background:#e8302a22;border:1px solid #e8302a55;
+  padding:2px 8px;border-radius:10px;font-size:9px;font-weight:600;color:var(--accent);
+  letter-spacing:.8px;text-transform:uppercase;margin-left:10px;vertical-align:middle}
+
 ::-webkit-scrollbar{width:5px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
@@ -260,6 +308,18 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 
 <div class="grid" id="grid">
   <div class="spinner-wrap"><div class="spinner"></div></div>
+</div>
+
+<!-- Punto 5: overlay nombre canal -->
+<div class="canal-overlay" id="canalOverlay">
+  <div class="canal-overlay-icon" id="canalOverlayIcon"></div>
+  <div class="canal-overlay-info">
+    <div class="canal-overlay-nombre" id="canalOverlayNombre"></div>
+    <div class="canal-overlay-cat" id="canalOverlayCat">
+      <span id="canalOverlayCatText"></span>
+      <span class="live-badge-sm"><span class="live-dot" style="width:5px;height:5px;margin-right:3px"></span>EN VIVO</span>
+    </div>
+  </div>
 </div>
 
 <div class="player-overlay" id="overlay">
@@ -524,11 +584,14 @@ const playerBox = document.getElementById('playerBox');
 
 function escHTML(s) { return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
+let _toastTimer = null;
 function toast(msg, type='') {
   const el = document.getElementById('toast');
   el.textContent = msg;
   el.className = 'toast show' + (type ? ' ' + type : '');
-  setTimeout(() => { el.className = 'toast'; }, 2800);
+  // Cancelar timer anterior para evitar que apague el toast nuevo prematuramente
+  if (_toastTimer) clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(() => { el.className = 'toast'; _toastTimer = null; }, 2800);
 }
 
 function abrirModal(id) { document.getElementById(id).classList.add('open'); }
@@ -648,28 +711,8 @@ playerBox.addEventListener('mousemove', mostrarBotonFlotante);
 playerBox.addEventListener('mouseenter', mostrarBotonFlotante);
 
 function bloquearPopupsEnIframe() {
-  try {
-    playerFrame.sandbox = 'allow-same-origin allow-scripts allow-forms allow-presentation allow-modals allow-popups-to-escape-sandbox';
-    
-    const iframeWindow = playerFrame.contentWindow;
-    if (iframeWindow) {
-      try {
-        iframeWindow.open = function(url, name, features) {
-          console.warn('Popup bloqueado en iframe:', url);
-          toast('⚠️ Ventana emergente bloqueada', 'error');
-          return null;
-        };
-      } catch(e) { }
-    }
-    
-    window.addEventListener('message', function(event) {
-      if (event.data && (event.data.type === 'popup' || event.data.action === 'open')) {
-        toast('⚠️ Popup bloqueado', 'error');
-        event.stopPropagation();
-      }
-    });
-    
-  } catch(e) { console.warn('Error configurando bloqueador:', e); }
+  // El atributo sandbox del iframe ya maneja el bloqueo de popups.
+  // Acceder a contentWindow cross-origin lanza SecurityError siempre.
 }
 
 function inyectarBloqueadorEnIframe() {
@@ -678,33 +721,14 @@ function inyectarBloqueadorEnIframe() {
 }
 
 function activarVolumenNativo() {
-  try {
-    const iframe = playerFrame;
-    if (iframe && iframe.contentWindow) {
-      const mouseEvent = new MouseEvent('mousemove', { bubbles: true });
-      iframe.dispatchEvent(mouseEvent);
-      
-      setTimeout(() => {
-        const clickEvent = new MouseEvent('click', { bubbles: true });
-        iframe.dispatchEvent(clickEvent);
-      }, 500);
-    }
-    
-    const unlockAudio = () => {
-      try {
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        audioContext.resume();
-      } catch(e) {}
-    };
-    
-    overlay.addEventListener('click', unlockAudio, { once: true });
-    playerFrame.addEventListener('load', () => {
-      setTimeout(() => {
-        bloquearPopupsEnIframe();
-        inyectarBloqueadorEnIframe();
-      }, 1000);
-    });
-  } catch(e) { console.warn('Error:', e); }
+  // Desbloquear AudioContext en el primer clic del usuario (política de autoplay)
+  const unlockAudio = () => {
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      ctx.resume();
+    } catch(e) {}
+  };
+  overlay.addEventListener('click', unlockAudio, { once: true });
 }
 
 function abrirCanal(id) {
@@ -720,11 +744,11 @@ function abrirCanal(id) {
   
   const col = catColors[c.cat] || catColors.deportes;
   if (cardActiva) {
-    const prevCard = document.getElementById('card-' + cardActiva);
+    const prevCard = document.querySelector(`[data-id="${CSS.escape(cardActiva)}"]`);
     if (prevCard) prevCard.classList.remove('playing');
   }
   cardActiva = id;
-  const card = document.getElementById('card-' + id);
+  const card = document.querySelector(`[data-id="${CSS.escape(id)}"]`);
   if (card) card.classList.add('playing');
   
   playerTitle.textContent = c.nombre;
@@ -736,26 +760,61 @@ function abrirCanal(id) {
   
   renderServerButtons(c);
   
-  setTimeout(() => {
-    activarVolumenNativo();
-    bloquearPopupsEnIframe();
-  }, 500);
+  activarVolumenNativo();
   
   overlay.classList.add('open');
-  
+
+  // ── Punto 5: mostrar overlay con nombre del canal ──
+  mostrarCanalOverlay(c);
+
+  // ── Punto 6: guardar último canal visto ──
+  try { localStorage.setItem('stv_last_canal', id); } catch(e) {}
+
   setTimeout(() => {
     fullscreenBtn.classList.remove('hide');
     ocultarBotonFlotante();
   }, 100);
 }
 
+let _overlayTimer = null;
+function mostrarCanalOverlay(c) {
+  const col = catColors[c.cat] || catColors.deportes;
+  const ovDiv    = document.getElementById('canalOverlay');
+  const ovIcon   = document.getElementById('canalOverlayIcon');
+  const ovNombre = document.getElementById('canalOverlayNombre');
+  const ovCat    = document.getElementById('canalOverlayCatText');
+  if (!ovDiv) return;
+
+  // Ícono: logo o texto
+  if (c.logo) {
+    ovIcon.innerHTML = `<img src="${escHTML(c.logo)}" style="width:100%;height:100%;object-fit:contain;border-radius:6px" onerror="this.style.display='none'">`;
+  } else {
+    ovIcon.style.background = col.bg;
+    ovIcon.style.border = `1px solid ${col.border}`;
+    ovIcon.style.color = col.color;
+    ovIcon.textContent = (c.icon || c.nombre.substring(0,4)).replace('\\n',' ');
+  }
+  ovNombre.textContent = c.nombre;
+  ovCat.textContent = col.label;
+  ovCat.style.color = col.color;
+
+  // Mostrar y auto-ocultar tras 3.5s
+  clearTimeout(_overlayTimer);
+  ovDiv.classList.add('show');
+  _overlayTimer = setTimeout(() => ovDiv.classList.remove('show'), 3500);
+}
+
 function cerrarPlayer() {
+  // Salir de fullscreen si está activo antes de cerrar el player
+  if (document.fullscreenElement) {
+    document.exitFullscreen().catch(() => {});
+  }
   overlay.classList.remove('open');
   playerFrame.src = '';
   serverButtons.innerHTML = '';
   currentCanal = null;
   if (cardActiva) {
-    const card = document.getElementById('card-' + cardActiva);
+    const card = document.querySelector(`[data-id="${CSS.escape(cardActiva)}"]`);
     if (card) card.classList.remove('playing');
     cardActiva = null;
   }
@@ -796,22 +855,23 @@ function renderGrid() {
   if (adminLogueado) grid.classList.add('admin-mode');
   else grid.classList.remove('admin-mode');
   
-  document.querySelectorAll('.canal-card').forEach(card => {
-    card.addEventListener('click', (e) => {
-      if (e.target.closest('.card-edit-btn')) return;
-      const id = card.dataset.id;
-      if (adminLogueado) editarCanal(id);
-      else abrirCanal(id);
-    });
-  });
-  
-  document.querySelectorAll('.card-edit-btn').forEach(btn => {
-    btn.addEventListener('click', (e) => {
+  // Event delegation: un solo listener en el grid para todas las cards
+  // Se reemplaza al re-renderizar para evitar duplicados
+  if (grid._clickHandler) grid.removeEventListener('click', grid._clickHandler);
+  grid._clickHandler = (e) => {
+    const editBtn = e.target.closest('.card-edit-btn');
+    if (editBtn) {
       e.stopPropagation();
-      const id = btn.dataset.id;
-      if (adminLogueado) editarCanal(id);
-    });
-  });
+      if (adminLogueado) editarCanal(editBtn.dataset.id);
+      return;
+    }
+    const card = e.target.closest('.canal-card');
+    if (card) {
+      if (adminLogueado) editarCanal(card.dataset.id);
+      else abrirCanal(card.dataset.id);
+    }
+  };
+  grid.addEventListener('click', grid._clickHandler);
 }
 
 function filtrar(cat, btn) {
@@ -819,22 +879,41 @@ function filtrar(cat, btn) {
   busquedaActiva = '';
   searchInput.value = '';
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  btn.classList.add('active');
+  // btn puede ser null si se llama programáticamente (p.ej. desde TV)
+  if (btn) btn.classList.add('active');
+  else {
+    const tab = document.querySelector(`.tab[data-cat="${cat}"]`);
+    if (tab) tab.classList.add('active');
+  }
   renderGrid();
 }
 
-function buscar() {
-  busquedaActiva = searchInput.value.trim();
+function buscar(q) {
+  // Acepta texto directo (llamadas programáticas) o lee del input
+  busquedaActiva = (typeof q === 'string') ? q.trim() : searchInput.value.trim();
   renderGrid();
 }
 
 fullscreenBtn.addEventListener('click', toggleFullscreen);
 
+// ── Punto 3: hash SHA-256 para credenciales ──
+async function hashStr(str) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+
 async function cargarCredenciales() {
   try {
     const snap = await getDoc(doc(db, 'config', 'admin'));
-    if (snap.exists()) adminCreds = snap.data();
-    else await setDoc(doc(db, 'config', 'admin'), {user: 'admin', pass: 'signal2024'});
+    if (snap.exists()) {
+      adminCreds = snap.data();
+    } else {
+      // Primer arranque: guardar hash de la contraseña por defecto
+      const passHash = await hashStr('signal2024');
+      await setDoc(doc(db, 'config', 'admin'), { user: 'admin', passHash });
+      adminCreds = { user: 'admin', passHash };
+    }
   } catch(e) { console.warn(e); }
 }
 
@@ -859,11 +938,27 @@ function suscribirCanales() {
   if (unsubCanales) unsubCanales();
   setConnDot('connecting');
   const q = query(collection(db, 'canales'), orderBy('orden', 'asc'));
+  let _lastSeenApplied = false;
   unsubCanales = onSnapshot(q, snap => {
     setConnDot('online');
     canales = snap.docs.map(d => ({id: d.id, ...d.data()}));
     renderGrid();
     if (adminLogueado) renderAdminList();
+    // Resaltar último canal visto — solo una vez por sesión, tras recibir canales
+    if (!_lastSeenApplied) {
+      _lastSeenApplied = true;
+      try {
+        const lastId = localStorage.getItem('stv_last_canal');
+        if (lastId) {
+          // Escapar ID para querySelector (los guiones son seguros en data attrs)
+          const card = document.querySelector('[data-id="' + CSS.escape(lastId) + '"]');
+          if (card) {
+            card.classList.add('last-seen');
+            card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          }
+        }
+      } catch(e) {}
+    }
   }, err => {
     setConnDot('offline');
     toast('Error de conexión con Firebase', 'error');
@@ -924,7 +1019,16 @@ async function intentarLogin() {
   const u = document.getElementById('loginUser').value.trim();
   const p = document.getElementById('loginPass').value;
   await cargarCredenciales();
-  if (u === adminCreds.user && p === adminCreds.pass) {
+  const inputHash = await hashStr(p);
+  // Soporta tanto passHash (nuevo) como pass en texto plano (migración)
+  const credOk = u === adminCreds.user &&
+    (inputHash === adminCreds.passHash || p === adminCreds.pass);
+  if (credOk) {
+    // Si aún tiene pass en texto plano, migrarlo a hash ahora
+    if (adminCreds.pass && !adminCreds.passHash) {
+      const h = await hashStr(adminCreds.pass);
+      await setDoc(doc(db, 'config', 'admin'), { user: adminCreds.user, passHash: h });
+    }
     adminLogueado = true;
     sessionStorage.setItem('stv_session', '1');
     cerrarModal('loginModal');
@@ -941,6 +1045,7 @@ function cerrarSesion() {
   adminLogueado = false;
   sessionStorage.removeItem('stv_session');
   cerrarAdminPanel();
+  if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
   renderGrid();
   toast('Sesión cerrada');
 }
@@ -1055,7 +1160,9 @@ async function cambiarPassword() {
   const confirm = document.getElementById('passConfirm').value;
   const errEl = document.getElementById('passError');
   
-  if (actual !== adminCreds.pass) {
+  const actualHash = await hashStr(actual);
+  const passMatch = actualHash === adminCreds.passHash || actual === adminCreds.pass;
+  if (!passMatch) {
     errEl.textContent = 'Contraseña actual incorrecta';
     errEl.style.display = 'block';
     return;
@@ -1071,8 +1178,10 @@ async function cambiarPassword() {
     return;
   }
   try {
-    await setDoc(doc(db, 'config', 'admin'), { user: adminCreds.user, pass: nueva });
-    adminCreds.pass = nueva;
+    const nuevaHash = await hashStr(nueva);
+    await setDoc(doc(db, 'config', 'admin'), { user: adminCreds.user, passHash: nuevaHash });
+    adminCreds.passHash = nuevaHash;
+    delete adminCreds.pass;
     cerrarModal('passModal');
     toast('Contraseña actualizada', 'success');
   } catch(e) { toast('Error al guardar', 'error'); }
@@ -1096,11 +1205,11 @@ async function importarJSON(file) {
       const data = JSON.parse(e.target.result);
       if (!Array.isArray(data)) throw new Error('Formato inválido');
       toast('Importando ' + data.length + ' canales...');
-      for (const c of data) {
-        await addDoc(collection(db, 'canales'), { ...c, orden: canales.length });
-      }
+      await Promise.all(
+        data.map((c, i) => addDoc(collection(db, 'canales'), { ...c, orden: canales.length + i }))
+      );
       toast(data.length + ' canales importados', 'success');
-    } catch(err) { toast('JSON inválido', 'error'); }
+    } catch(err) { toast('JSON inválido — verifica el formato', 'error'); }
   };
   reader.readAsText(file);
 }
@@ -1153,9 +1262,18 @@ async function init() {
   suscribirCanales();
   if (adminLogueado) renderGrid();
   fullscreenBtn.classList.add('hide');
+
+  // ── Punto 6: resaltar último canal visto ──
+  // Se ejecuta en suscribirCanales() al recibir el primer snapshot de Firestore
+  // para evitar acumulación de intervals si init() se reejecutara.
 }
 
 init();
+
+// ── Punto 4: registrar Service Worker para caché offline ──
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').catch(() => {});
+}
 </script>
 </body>
 </html>
