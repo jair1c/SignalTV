@@ -165,7 +165,6 @@ class TvActivity : FragmentActivity() {
                 true
             }
             
-            // Tecla 0-9 para atajos rápidos (opcional)
             KeyEvent.KEYCODE_0 -> { quickOpenChannel(0); true }
             KeyEvent.KEYCODE_1 -> { quickOpenChannel(1); true }
             KeyEvent.KEYCODE_2 -> { quickOpenChannel(2); true }
@@ -196,7 +195,6 @@ class TvActivity : FragmentActivity() {
                 true
             }
             
-            // Tecla INFO para mostrar info del canal actual
             KeyEvent.KEYCODE_INFO -> {
                 showCurrentChannelInfo()
                 true
@@ -340,10 +338,7 @@ class TvActivity : FragmentActivity() {
             displayZoomControls = false
             userAgentString = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 SignalTV/2.0 AndroidTV"
             
-            // Optimizaciones adicionales
-            setAppCacheEnabled(true)
-            setAppCachePath(cacheDir.absolutePath)
-            setDatabasePath(cacheDir.absolutePath)
+            // Optimizaciones adicionales (sin métodos deprecados)
             setGeolocationEnabled(false)
             setSavePassword(false)
             setSaveFormData(false)
@@ -370,7 +365,6 @@ class TvActivity : FragmentActivity() {
             fun preloadChannel(url: String) {
                 preloadExecutor.submit {
                     try {
-                        // Precarga silenciosa del stream
                         val connection = java.net.URL(url).openConnection()
                         connection.connectTimeout = 5000
                         connection.readTimeout = 5000
@@ -420,7 +414,6 @@ class TvActivity : FragmentActivity() {
             
             override fun onLoadResource(view: WebView?, url: String?) {
                 super.onLoadResource(view, url)
-                // Notificar progreso de carga
             }
         }
 
@@ -471,7 +464,6 @@ window.__stvUltraLoaded = true;
 
 document.body.setAttribute('data-platform','androidtv');
 
-// Estilos ultra optimizados
 var style = document.createElement('style');
 style.textContent = `
     * {
@@ -510,7 +502,6 @@ style.textContent = `
     .canal-card, .tab, button {
         touch-action: manipulation;
     }
-    /* Animaciones reducidas para mejor rendimiento */
     @media (prefers-reduced-motion: reduce) {
         * {
             animation-duration: 0.01ms !important;
@@ -520,7 +511,6 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
-// Cache de elementos focusables
 var focusableElements = null;
 var lastFocusableUpdate = 0;
 var UPDATE_THROTTLE = 500;
@@ -540,7 +530,6 @@ function getFocusableElements() {
     return focusableElements;
 }
 
-// Navegación optimizada
 window.__tvNavOptimized = function(dir) {
     var active = document.activeElement;
     
@@ -611,12 +600,11 @@ window.__tvNavOptimized = function(dir) {
     best.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
 };
 
-// Precarga inteligente de canales
 window.__preloadQueue = [];
 window.__preloadCurrent = 0;
 
 window.__startPreload = function(canalesArray) {
-    window.__preloadQueue = canalesArray.slice(0, 10); // Solo precargar primeros 10
+    window.__preloadQueue = canalesArray.slice(0, 10);
     window.__preloadCurrent = 0;
     window.__preloadNext();
 };
@@ -629,7 +617,6 @@ window.__preloadNext = function() {
         try {
             NativeBridge.preloadChannel(canal.url);
         } catch(e) {}
-        // Precargar también en el DOM si es posible
         var link = document.createElement('link');
         link.rel = 'preconnect';
         try {
@@ -641,7 +628,6 @@ window.__preloadNext = function() {
     setTimeout(window.__preloadNext, 1000);
 };
 
-// Quick open channel por número
 window.__quickOpenChannel = function(number) {
     var cards = document.querySelectorAll('.canal-card');
     if (number >= 1 && number <= cards.length) {
@@ -656,7 +642,6 @@ window.__quickOpenChannel = function(number) {
     }
 };
 
-// Mostrar info del canal actual
 window.__showChannelInfo = function() {
     var playing = document.querySelector('.canal-card.playing');
     if (playing) {
