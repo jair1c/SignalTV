@@ -2,26 +2,25 @@ package com.signaltv.app
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
-import android.app.PictureInPictureParams
+import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Rational
 import android.view.KeyEvent
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
-
 import android.webkit.*
 import android.widget.FrameLayout
 import android.widget.ProgressBar
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import java.util.concurrent.Executors
 
-class TvActivity : AppCompatActivity() {  // Fix: AppCompatActivity, no FragmentActivity
+class TvActivity : AppCompatActivity() {
 
     private lateinit var webView: WebView
     private lateinit var progressBar: ProgressBar
@@ -43,12 +42,17 @@ class TvActivity : AppCompatActivity() {  // Fix: AppCompatActivity, no Fragment
 
     private val preloadExecutor = Executors.newSingleThreadExecutor()
 
+    // PiP: solo si el dispositivo lo soporta realmente
+    private val supportsPip: Boolean by lazy {
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.O &&
+        packageManager.hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         applyImmersive()
 
-        // Fix: findViewById explícito, sin binding
         webView = findViewById(R.id.webView)
         progressBar = findViewById(R.id.progressBar)
 
@@ -71,7 +75,10 @@ class TvActivity : AppCompatActivity() {  // Fix: AppCompatActivity, no Fragment
     override fun onPause() {
         super.onPause()
         webView.onPause()
-        if (playerActive && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) tryEnterPip()
+        // PiP solo si el dispositivo lo soporta Y hay algo reproduciéndose
+        if (playerActive && supportsPip) {
+            tryEnterPip()
+        }
     }
 
     override fun onDestroy() {
@@ -86,11 +93,12 @@ class TvActivity : AppCompatActivity() {  // Fix: AppCompatActivity, no Fragment
     }
 
     private fun applyImmersive() {
-        androidx.core.view.WindowCompat.setDecorFitsSystemWindows(window, false)
-        val ctrl = androidx.core.view.WindowInsetsControllerCompat(window, window.decorView)
-        ctrl.hide(androidx.core.view.WindowInsetsCompat.Type.systemBars())
+        // WindowCompat es seguro en todas las APIs y no requiere DecorView adjunto
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        val ctrl = WindowInsetsControllerCompat(window, window.decorView)
+        ctrl.hide(WindowInsetsCompat.Type.systemBars())
         ctrl.systemBarsBehavior =
-            androidx.core.view.WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
     }
 
     override fun dispatchKeyEvent(event: KeyEvent): Boolean {
@@ -121,17 +129,17 @@ class TvActivity : AppCompatActivity() {  // Fix: AppCompatActivity, no Fragment
             KeyEvent.KEYCODE_DPAD_UP    -> { if (!playerActive) navigateTv("up");    true }
             KeyEvent.KEYCODE_DPAD_DOWN  -> { if (!playerActive) navigateTv("down");  true }
 
-            KeyEvent.KEYCODE_PROG_RED    -> { switchCategory("deportes");       showToast("⚽ Deportes");          true }
+            KeyEvent.KEYCODE_PROG_RED    -> { switchCategory("deportes");        showToast("⚽ Deportes");         true }
             KeyEvent.KEYCODE_PROG_GREEN  -> { switchCategory("entretenimiento"); showToast("🎬 Entretenimiento"); true }
-            KeyEvent.KEYCODE_PROG_YELLOW -> { switchCategory("documentales");   showToast("🔭 Documentales");     true }
-            KeyEvent.KEYCODE_PROG_BLUE   -> { switchCategory("cine");           showToast("🎥 Cine");              true }
+            KeyEvent.KEYCODE_PROG_YELLOW -> { switchCategory("documentales");    showToast("🔭 Documentales");    true }
+            KeyEvent.KEYCODE_PROG_BLUE   -> { switchCategory("cine");            showToast("🎥 Cine");             true }
 
             // "." o "0" → fullscreen del reproductor
             KeyEvent.KEYCODE_PERIOD,
             KeyEvent.KEYCODE_0,
             KeyEvent.KEYCODE_NUMPAD_0 -> { togglePlayerFullscreen(); true }
 
-            // 1-3: cambiar servidor si player está abierto, sino abrir canal
+            // 1-3: servidor si player abierto, canal si cerrado
             KeyEvent.KEYCODE_1, KeyEvent.KEYCODE_NUMPAD_1 -> {
                 if (playerActive) switchServer(1) else quickOpenChannel(1); true
             }
@@ -141,8 +149,6 @@ class TvActivity : AppCompatActivity() {  // Fix: AppCompatActivity, no Fragment
             KeyEvent.KEYCODE_3, KeyEvent.KEYCODE_NUMPAD_3 -> {
                 if (playerActive) switchServer(3) else quickOpenChannel(3); true
             }
-
-            // 4-9: solo abrir canal (player cerrado)
             KeyEvent.KEYCODE_4, KeyEvent.KEYCODE_NUMPAD_4 -> { if (!playerActive) quickOpenChannel(4); true }
             KeyEvent.KEYCODE_5, KeyEvent.KEYCODE_NUMPAD_5 -> { if (!playerActive) quickOpenChannel(5); true }
             KeyEvent.KEYCODE_6, KeyEvent.KEYCODE_NUMPAD_6 -> { if (!playerActive) quickOpenChannel(6); true }
@@ -187,7 +193,7 @@ class TvActivity : AppCompatActivity() {  // Fix: AppCompatActivity, no Fragment
                 var p=document.getElementById('playerBox')||document.querySelector('video');
                 if(!p)return;
                 if(document.fullscreenElement)document.exitFullscreen();
-                else p.requestFullscreen&&p.requestFullscreen();
+                else if(p.requestFullscreen)p.requestFullscreen();
             })()
         """.trimIndent(), null)
     }
@@ -311,7 +317,7 @@ class TvActivity : AppCompatActivity() {  // Fix: AppCompatActivity, no Fragment
 
         webView.addJavascriptInterface(object : Any() {
             @JavascriptInterface fun playerOpened() { runOnUiThread { playerActive = true } }
-            @JavascriptInterface fun playerClosed() { runOnUiThread { playerActive = false } }
+            @JavascriptInterface fun playerClosed()  { runOnUiThread { playerActive = false } }
             @JavascriptInterface
             fun preloadChannel(url: String) {
                 preloadExecutor.submit {
@@ -334,7 +340,7 @@ class TvActivity : AppCompatActivity() {  // Fix: AppCompatActivity, no Fragment
                 progressBar.visibility = View.VISIBLE
                 playerActive = false
                 isFullscreen = false
-                jsInjected = false  // Bug #4 fix
+                jsInjected = false
             }
             override fun onPageFinished(view: WebView?, url: String?) {
                 progressBar.visibility = View.GONE
@@ -359,7 +365,6 @@ class TvActivity : AppCompatActivity() {  // Fix: AppCompatActivity, no Fragment
             }
             override fun onPermissionRequest(req: PermissionRequest?) { req?.grant(req.resources) }
 
-            // Bug #1 fix: decorView add/removeView
             override fun onShowCustomView(view: View?, callback: CustomViewCallback?) {
                 if (fullscreenView != null) { callback?.onCustomViewHidden(); return }
                 isFullscreen = true
@@ -498,22 +503,29 @@ function watchPlayer(){
 }
 watchPlayer();
 
-console.log('[SignalTV] JS v2.1 OK');
+console.log('[SignalTV] JS v2.2 TV OK');
 })();
         """.trimIndent()
         view?.evaluateJavascript(js, null)
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun tryEnterPip() {
+        if (!supportsPip) return
         try {
-            enterPictureInPictureMode(
-                PictureInPictureParams.Builder().setAspectRatio(Rational(16, 9)).build())
-        } catch (_: Exception) {}
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val params = android.app.PictureInPictureParams.Builder()
+                    .setAspectRatio(android.util.Rational(16, 9))
+                    .build()
+                enterPictureInPictureMode(params)
+            }
+        } catch (e: Exception) {
+            android.util.Log.w("SignalTV", "PiP no disponible: ${e.message}")
+        }
     }
 
     override fun onPictureInPictureModeChanged(inPip: Boolean, cfg: Configuration) {
         super.onPictureInPictureModeChanged(inPip, cfg)
+        if (!supportsPip) return
         val js = if (inPip)
             "['.header','.tabs','.search-wrap','.grid'].forEach(function(s){var e=document.querySelector(s);if(e)e.style.setProperty('display','none','important');});"
         else
