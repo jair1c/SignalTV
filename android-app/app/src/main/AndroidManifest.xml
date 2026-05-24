@@ -19,32 +19,43 @@
         android:largeHeap="true"
         android:networkSecurityConfig="@xml/network_security_config">
 
+        <!--
+            MainActivity: punto de entrada único para smartphones Y TV boxes.
+            Detecta si es TV y redirige a TvActivity automáticamente.
+        -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:configChanges="orientation|screenSize|keyboardHidden|screenLayout|smallestScreenSize"
             android:screenOrientation="landscape"
             android:windowSoftInputMode="adjustResize">
+
+            <!-- Launcher para smartphones y tablets -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
 
-        <activity
-            android:name=".TvActivity"
-            android:exported="true"
-            android:banner="@drawable/banner"
-            android:configChanges="orientation|screenSize|keyboardHidden|screenLayout|smallestScreenSize"
-            android:screenOrientation="landscape"
-            android:supportsPictureInPicture="true"
-            android:theme="@style/Theme.SignalTV"
-            android:launchMode="singleTop">
+            <!-- Launcher para Android TV (leanback) -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!--
+            TvActivity: solo se abre desde MainActivity via Intent.
+            No tiene intent-filter propio para evitar conflicto de MAIN duplicado.
+        -->
+        <activity
+            android:name=".TvActivity"
+            android:exported="false"
+            android:banner="@drawable/banner"
+            android:configChanges="orientation|screenSize|keyboardHidden|screenLayout|smallestScreenSize"
+            android:screenOrientation="landscape"
+            android:supportsPictureInPicture="true"
+            android:theme="@style/Theme.SignalTV"
+            android:launchMode="singleTop" />
 
     </application>
 

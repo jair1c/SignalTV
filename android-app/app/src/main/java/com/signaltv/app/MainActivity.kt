@@ -1,6 +1,10 @@
 package com.signaltv.app
 
 import android.annotation.SuppressLint
+import android.app.UiModeManager
+import android.content.Context
+import android.content.Intent
+import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.view.KeyEvent
@@ -24,10 +28,23 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         const val APP_URL = "https://signal-tv.vercel.app"
+
+        fun isAndroidTV(context: Context): Boolean {
+            val uiModeManager = context.getSystemService(Context.UI_MODE_SERVICE) as UiModeManager
+            return uiModeManager.currentModeType == Configuration.UI_MODE_TYPE_TELEVISION
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Redirigir a TvActivity si estamos en Android TV
+        if (isAndroidTV(this)) {
+            startActivity(Intent(this, TvActivity::class.java))
+            finish()
+            return
+        }
+
         applyImmersive()
         setContentView(R.layout.activity_main)
 
@@ -87,14 +104,17 @@ class MainActivity : AppCompatActivity() {
                 progressBar.visibility = View.GONE
                 hasRetried = false
             }
-            override fun onReceivedError(view: WebView?, request: WebResourceRequest?, error: WebResourceError?) {
-                // Bug #6 fix: un solo reintento, no loop
+            override fun onReceivedError(
+                view: WebView?, request: WebResourceRequest?, error: WebResourceError?
+            ) {
                 if (request?.isForMainFrame == true && !hasRetried) {
                     hasRetried = true
                     view?.loadUrl(APP_URL)
                 }
             }
-            override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
+            override fun shouldOverrideUrlLoading(
+                view: WebView?, request: WebResourceRequest?
+            ): Boolean {
                 val url = request?.url?.toString() ?: return false
                 return !url.startsWith("http://") && !url.startsWith("https://")
             }
@@ -105,19 +125,18 @@ class MainActivity : AppCompatActivity() {
                 progressBar.progress = p
                 if (p == 100) progressBar.visibility = View.GONE
             }
-
-            // Bug #1 fix: decorView add/removeView
             override fun onShowCustomView(view: View?, callback: CustomViewCallback?) {
                 if (customView != null) { callback?.onCustomViewHidden(); return }
                 customView = view
                 customViewCallback = callback
                 val lp = FrameLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT
+                )
                 (window.decorView as FrameLayout).addView(view, lp)
                 webView.visibility = View.GONE
                 applyImmersive()
             }
-
             override fun onHideCustomView() {
                 if (customView == null) return
                 (window.decorView as FrameLayout).removeView(customView)
@@ -127,7 +146,6 @@ class MainActivity : AppCompatActivity() {
                 webView.visibility = View.VISIBLE
                 applyImmersive()
             }
-
             override fun onPermissionRequest(request: PermissionRequest?) {
                 request?.grant(request.resources)
             }
