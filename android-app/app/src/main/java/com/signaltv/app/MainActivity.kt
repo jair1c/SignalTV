@@ -18,10 +18,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var webView: WebView
     private lateinit var progressBar: ProgressBar
 
-    // Bug #6 fix: evitar retry loop infinito en MainActivity también
     private var hasRetried = false
-
-    // Bug #1 fix: referencias para fullscreen sin destruir la WebView
     private var customView: View? = null
     private var customViewCallback: WebChromeClient.CustomViewCallback? = null
 
@@ -29,14 +26,16 @@ class MainActivity : AppCompatActivity() {
         const val APP_URL = "https://signal-tv.vercel.app"
     }
 
-    @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         applyImmersive()
         setContentView(R.layout.activity_main)
+
         webView = findViewById(R.id.webView)
         progressBar = findViewById(R.id.progressBar)
+
         setupWebView()
+
         if (savedInstanceState != null) {
             webView.restoreState(savedInstanceState)
         } else {
@@ -44,7 +43,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // Bug #5 fix: usar WindowInsetsController en API 30+
     private fun applyImmersive() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             window.insetsController?.apply {
@@ -77,21 +75,20 @@ class MainActivity : AppCompatActivity() {
             setSupportZoom(false)
             builtInZoomControls = false
             displayZoomControls = false
-            userAgentString = userAgentString.replace("Mobile", "SignalTV/1.0")
         }
 
         webView.setLayerType(View.LAYER_TYPE_HARDWARE, null)
 
         webView.webViewClient = object : WebViewClient() {
-            override fun onPageStarted(view: WebView?, url: String?, favicon: android.graphics.Bitmap?) {
+            override fun onPageStarted(view: WebView?, url: String?, fav: android.graphics.Bitmap?) {
                 progressBar.visibility = View.VISIBLE
             }
             override fun onPageFinished(view: WebView?, url: String?) {
                 progressBar.visibility = View.GONE
-                hasRetried = false  // Reset al cargar con éxito
+                hasRetried = false
             }
             override fun onReceivedError(view: WebView?, request: WebResourceRequest?, error: WebResourceError?) {
-                // Bug #6 fix: solo un reintento, no bucle infinito
+                // Bug #6 fix: un solo reintento, no loop
                 if (request?.isForMainFrame == true && !hasRetried) {
                     hasRetried = true
                     view?.loadUrl(APP_URL)
@@ -104,29 +101,23 @@ class MainActivity : AppCompatActivity() {
         }
 
         webView.webChromeClient = object : WebChromeClient() {
-            override fun onProgressChanged(view: WebView?, newProgress: Int) {
-                progressBar.progress = newProgress
-                if (newProgress == 100) progressBar.visibility = View.GONE
+            override fun onProgressChanged(view: WebView?, p: Int) {
+                progressBar.progress = p
+                if (p == 100) progressBar.visibility = View.GONE
             }
 
-            // Bug #1 fix: agregar la view al decorView en lugar de hacer setContentView
+            // Bug #1 fix: decorView add/removeView
             override fun onShowCustomView(view: View?, callback: CustomViewCallback?) {
-                if (customView != null) {
-                    callback?.onCustomViewHidden()
-                    return
-                }
+                if (customView != null) { callback?.onCustomViewHidden(); return }
                 customView = view
                 customViewCallback = callback
                 val lp = FrameLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT
-                )
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
                 (window.decorView as FrameLayout).addView(view, lp)
                 webView.visibility = View.GONE
                 applyImmersive()
             }
 
-            // Bug #1 fix: remover la view correctamente, sin recargar la app
             override fun onHideCustomView() {
                 if (customView == null) return
                 (window.decorView as FrameLayout).removeView(customView)
