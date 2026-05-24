@@ -12,8 +12,8 @@ import android.util.Rational
 import android.view.KeyEvent
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowInsets
-import android.view.WindowInsetsController
+import android.view.WindowManager
+
 import android.webkit.*
 import android.widget.FrameLayout
 import android.widget.ProgressBar
@@ -45,8 +45,8 @@ class TvActivity : AppCompatActivity() {  // Fix: AppCompatActivity, no Fragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        applyImmersive()
         setContentView(R.layout.activity_main)
+        applyImmersive()
 
         // Fix: findViewById explícito, sin binding
         webView = findViewById(R.id.webView)
@@ -86,21 +86,11 @@ class TvActivity : AppCompatActivity() {  // Fix: AppCompatActivity, no Fragment
     }
 
     private fun applyImmersive() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            window.insetsController?.apply {
-                hide(WindowInsets.Type.systemBars())
-                systemBarsBehavior = WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-            }
-        } else {
-            @Suppress("DEPRECATION")
-            window.decorView.systemUiVisibility = (
-                View.SYSTEM_UI_FLAG_FULLSCREEN or
-                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or
-                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY or
-                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or
-                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-            )
-        }
+        androidx.core.view.WindowCompat.setDecorFitsSystemWindows(window, false)
+        val ctrl = androidx.core.view.WindowInsetsControllerCompat(window, window.decorView)
+        ctrl.hide(androidx.core.view.WindowInsetsCompat.Type.systemBars())
+        ctrl.systemBarsBehavior =
+            androidx.core.view.WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
     }
 
     override fun dispatchKeyEvent(event: KeyEvent): Boolean {

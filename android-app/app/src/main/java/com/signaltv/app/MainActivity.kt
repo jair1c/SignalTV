@@ -10,12 +10,14 @@ import android.os.Bundle
 import android.view.KeyEvent
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowInsets
-import android.view.WindowInsetsController
+import android.view.WindowManager
 import android.webkit.*
 import android.widget.FrameLayout
 import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 
 class MainActivity : AppCompatActivity() {
 
@@ -38,15 +40,20 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Redirigir a TvActivity si estamos en Android TV
+        // Redirigir a TvActivity si es Android TV
         if (isAndroidTV(this)) {
             startActivity(Intent(this, TvActivity::class.java))
             finish()
             return
         }
 
-        applyImmersive()
+        // Flags de ventana ANTES de setContentView — esto sí funciona antes del DecorView
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
         setContentView(R.layout.activity_main)
+
+        // applyImmersive DESPUÉS de setContentView — el DecorView ya existe
+        applyImmersive()
 
         webView = findViewById(R.id.webView)
         progressBar = findViewById(R.id.progressBar)
@@ -61,19 +68,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun applyImmersive() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            window.insetsController?.apply {
-                hide(WindowInsets.Type.systemBars())
-                systemBarsBehavior = WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-            }
-        } else {
-            @Suppress("DEPRECATION")
-            window.decorView.systemUiVisibility = (
-                View.SYSTEM_UI_FLAG_FULLSCREEN or
-                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or
-                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-            )
-        }
+        // WindowCompat funciona en todas las APIs y no crashea
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        val controller = WindowInsetsControllerCompat(window, window.decorView)
+        controller.hide(WindowInsetsCompat.Type.systemBars())
+        controller.systemBarsBehavior =
+            WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
     }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -93,7 +93,6 @@ class MainActivity : AppCompatActivity() {
             builtInZoomControls = false
             displayZoomControls = false
         }
-
         webView.setLayerType(View.LAYER_TYPE_HARDWARE, null)
 
         webView.webViewClient = object : WebViewClient() {
@@ -104,17 +103,13 @@ class MainActivity : AppCompatActivity() {
                 progressBar.visibility = View.GONE
                 hasRetried = false
             }
-            override fun onReceivedError(
-                view: WebView?, request: WebResourceRequest?, error: WebResourceError?
-            ) {
+            override fun onReceivedError(view: WebView?, request: WebResourceRequest?, error: WebResourceError?) {
                 if (request?.isForMainFrame == true && !hasRetried) {
                     hasRetried = true
                     view?.loadUrl(APP_URL)
                 }
             }
-            override fun shouldOverrideUrlLoading(
-                view: WebView?, request: WebResourceRequest?
-            ): Boolean {
+            override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
                 val url = request?.url?.toString() ?: return false
                 return !url.startsWith("http://") && !url.startsWith("https://")
             }
@@ -130,9 +125,7 @@ class MainActivity : AppCompatActivity() {
                 customView = view
                 customViewCallback = callback
                 val lp = FrameLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT
-                )
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
                 (window.decorView as FrameLayout).addView(view, lp)
                 webView.visibility = View.GONE
                 applyImmersive()
@@ -152,19 +145,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        if (keyCode == KeyEvent.KEYCODE_BACK && webView.canGoBack()) {
-            webView.goBack()
-            return true
-        }
-        return super.onKeyDown(keyCode, event)
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        webView.saveState(outState)
-    }
-
     override fun onResume() {
         super.onResume()
         webView.onResume()
@@ -179,5 +159,18 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         webView.destroy()
         super.onDestroy()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        webView.saveState(outState)
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        if (keyCode == KeyEvent.KEYCODE_BACK && webView.canGoBack()) {
+            webView.goBack()
+            return true
+        }
+        return super.onKeyDown(keyCode, event)
     }
 }
